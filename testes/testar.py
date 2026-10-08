@@ -60,6 +60,20 @@ def main():
         r = rodar(S / "autos.py", "inventario", tmp / "acervo", "--lista", n["n1"], n["n2"], n["n3"])
         checar("lote01" in r.stdout, "a mesma lista deve retomar o lote aberto")
 
+        # 1-b. transcrições em .vtt e .docx (formatos alternativos do aplicativo)
+        tr = tmp / "Transcrições"
+        (tr / f"{n['n2']}_audiencia_15-03-2024.vtt").write_text(
+            "WEBVTT\n\n00:01:05.000 --> 00:01:09.000\nJuiz: Ouvida a testemunha.\n", encoding="utf-8")
+        with zipfile.ZipFile(tr / f"Termo {n['n2']}.docx", "w") as z:
+            z.writestr("word/document.xml", '<w:document xmlns:w="x"><w:body><w:p><w:r><w:t>Depoimento: o fiscal reteve a carga.</w:t></w:r></w:p></w:body></w:document>')
+        r = rodar(S / "ponte_helestron.py", "transcricoes", "--transcricoes", tr, "--numero", n["n2"])
+        idx = json.loads(r.stdout)["indice"][n["n2"]]
+        checar(len(idx) == 2 and idx[0]["data"] == "2024-03-15", "índice de transcrições .vtt/.docx")
+        r = rodar(S / "ponte_helestron.py", "ler-transcricao", next(x["arquivo"] for x in idx if x["tipo"] == "vtt"))
+        checar("[01:05] Juiz: Ouvida a testemunha." in r.stdout, "leitura de .vtt")
+        r = rodar(S / "ponte_helestron.py", "ler-transcricao", next(x["arquivo"] for x in idx if x["tipo"] == "docx"))
+        checar("o fiscal reteve a carga" in r.stdout, "leitura de .docx")
+
         # 2. portão
         exemplo = RAIZ / "testes" / "minuta_exemplo_sentenca.txt"
         r = rodar(S / "verificar_minuta.py", exemplo)
