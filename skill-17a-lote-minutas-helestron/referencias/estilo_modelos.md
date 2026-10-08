@@ -180,7 +180,7 @@ questão de ofício sai. O que se corta nos modelos ao adaptá-los:
 | Lista de quatro julgados do TJAL no mesmo sentido | o precedente mais pertinente, com a tese que decide (e o vinculante, se houver) |
 | Art. 20 da Lei n.º 6.514/2004 transcrito com todos os incisos, alíneas e a tabela de interstícios | o *caput* e o inciso que decide o caso (v.g., o VI, do curso), com a alínea da graduação do autor |
 | A mesma ideia dita duas vezes ("deveriam estar … minuciosamente explicadas" e "devem ser minuciosamente explicadas e comprovadas") | uma vez, no ponto em que conclui |
-| Três analogias para a mesma tese (juiz/desembargador, quinto constitucional, embaixadores e promotores) | uma |
+| Três analogias para a mesma tese (juiz e desembargador, o "Quinto" da lista de antiguidade dos juízes, embaixadores e promotores) | uma |
 | Digressão sem função decisória ("A legislação estadual nesta matéria carece de atualização…") | suprimir, salvo se fundamentar algo do caso |
 | Precedente de caso isolado do próprio juízo ("Este Juízo já decidiu, em um específico caso…") | só quando a distinção for necessária para tratar igualmente casos iguais |
 | Ementa longa de tribunal de outro Estado (TJPR, no modelo 4) | precedente do STF, do STJ ou do TJAL, conferido; ementa só no trecho que decide |
