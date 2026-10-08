@@ -213,10 +213,18 @@ def conferir_xml(limpa: Path, anotada: Path, pars) -> list:
         erros.append("numeração automática na versão limpa")
     if any(p["k"] == "cit" for p in pars) and "Courier New" not in x:
         erros.append("transcrição sem Courier New")
-    if any(p["k"] == "dispositivo" for p in pars):
-        bloco = x[x.find(escape(marcacao.sem_marcas(next(p for p in pars if p["k"] == "dispositivo")["txt"])[:20])) - 400:]
-        if "<w:b/>" not in bloco[:600] or "<w:u " not in bloco[:600]:
-            erros.append("dispositivo sem negrito e sublinhado")
+    disp = next((p for p in pars if p["k"] == "dispositivo"), None)
+    if disp:
+        inicio = marcacao.sem_marcas(disp["txt"])[:30]
+        for par in re.findall(r"<w:p>.*?</w:p>", x, re.S):
+            texto = "".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", par))
+            if texto.startswith(escape(inicio)):
+                corridas = re.findall(r"<w:r>.*?</w:r>", par, re.S)
+                if not all("<w:b/>" in c and "<w:u " in c for c in corridas):
+                    erros.append("dispositivo sem negrito e sublinhado")
+                break
+        else:
+            erros.append("dispositivo não encontrado na versão limpa")
     with zipfile.ZipFile(anotada) as z:
         xa = z.read("word/document.xml").decode("utf-8")
     if any("{{" in p["txt"] for p in pars) and 'w:color w:val="FF0000"' not in xa:
