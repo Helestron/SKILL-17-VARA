@@ -1,0 +1,76 @@
+# termos estrangeiros (latim e outros idiomas) que o gerador italiciza automaticamente
+caput
+per saltum
+ex officio
+ex tunc
+ex nunc
+erga omnes
+inter partes
+ultra petita
+extra petita
+citra petita
+reformatio in pejus
+reformatio in peius
+in dubio pro
+sub judice
+status quo
+quantum
+fumus boni iuris
+periculum in mora
+data venia
+data maxima venia
+in casu
+ratio decidendi
+obiter dictum
+distinguishing
+overruling
+leading case
+querela nullitatis
+pacta sunt servanda
+venire contra factum proprium
+sine qua non
+a quo
+ad quem
+in limine
+inaudita altera parte
+iura novit curia
+tempus regit actum
+mutatis mutandis
+exceptio
+dies a quo
+dies ad quem
+custos legis
+custos iuris
+pro rata
+stricto sensu
+lato sensu
+verbis
+verbi gratia
+decisum
+parquet
+expert
+e-mail
+software
+site
+pas de nullité sans grief
+ad judicia
+ad judicia et extra
+bis in idem
+non bis in idem
+error in procedendo
+error in judicando
+res judicata
+animus
+modus operandi
+sui generis
+de cujus
+habeas data
+mandamus
+writ
+astreintes
+in fine
+in verbis
+ipsis litteris
+ab initio
+a posteriori
+a priori

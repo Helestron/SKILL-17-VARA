@@ -1,0 +1,21 @@
+// Minuta fictícia de teste da marcação (nomes e fatos inventados).
+@ato sentença
+@processo 0714346-41.2024.8.02.0001
+Trata-se de Ação Ordinária proposta por **Fulano de Tal**, qualificado, em face do **Estado de Alagoas**.
+O autor, militar da ativa, ocupa a graduação de 2º Sargento da Polícia Militar de Alagoas e busca a promoção por ressarcimento de preterição à graduação de 1º Sargento, com efeitos retroativos, ao argumento de que cumpriu o interstício legal (fls. 1/12).
+Indeferida a tutela de urgência e deferida a gratuidade da justiça (fls. 40/42).
+O Estado de Alagoas contestou às fls. 50/61. Arguiu a coisa julgada e, no mérito, sustentou a falta dos requisitos do art. 20 da Lei Estadual n.º 6.514/2004.
+Réplica às fls. 70/75.
+É o Relatório.
+No que concerne à **coisa julgada**, a ação anterior buscou a promoção a contar de 2020, ao passo que esta se funda em preterição ocorrida em 2023 (fls. 55/58), de modo que não há identidade de pedido nem de causa de pedir (art. 337, §§ 2º e 4º, do CPC).
+!! Desse modo, afasto a prejudicial de coisa julgada.
+No mérito, a controvérsia reside em saber se o simples decurso do interstício assegura a promoção. O Tribunal de Justiça de Alagoas fixou, no IRDR n.º 3, a seguinte tese:
+> 1.1. O mero cumprimento do interstício temporal no posto não implica preterição e, por essa razão, não gera direito automático à promoção.
+!! Ocorre que a pretensão se apoia tão somente no decurso do tempo mínimo na graduação, sem prova dos demais requisitos legais.
+Com efeito, o autor não comprovou o curso de aperfeiçoamento exigido pelo art. 20, VI, da Lei Estadual n.º 6.514/2004, ônus que lhe incumbia (art. 373, I, do CPC). {{Conferir: certificado de curso às fls. 30, ilegível}}
+Desse modo, à míngua de prova do fato constitutivo, o pedido não comporta acolhimento.
+Diante do exposto, julgo improcedente a demanda.
+Condeno a parte autora nas custas e em honorários advocatícios de R$ 1.000,00 (um mil reais), nos termos do art. 85, § 8º, do CPC, __com a exigibilidade suspensa em razão da gratuidade (art. 98, § 3º, do CPC)__.
+Intime-se o Estado de Alagoas pessoalmente, na forma do art. 183, § 1º, do CPC.
+Com o trânsito em julgado, **arquivem-se os autos com a devida baixa**, independentemente de nova determinação.
+P. R. I.

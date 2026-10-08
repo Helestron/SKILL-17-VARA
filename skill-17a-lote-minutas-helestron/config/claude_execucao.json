@@ -1,0 +1,62 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit",
+      "Write",
+      "WebFetch",
+      "WebSearch",
+      "Agent",
+      "Task",
+      "TaskCreate",
+      "TaskUpdate",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(py *)",
+      "Bash(*python.exe *)",
+      "Bash(cd *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(cygpath *)",
+      "Bash(reg query *)",
+      "Bash(pdftotext *)",
+      "Bash(pdftoppm *)",
+      "Bash(tesseract *)",
+      "Bash(soffice *)",
+      "PowerShell(python *)",
+      "PowerShell(py *)",
+      "PowerShell(& *python.exe *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Get-Content *)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(New-Item *)",
+      "PowerShell(Copy-Item *)",
+      "mcp__claude-in-chrome__*",
+      "mcp__Claude_Browser__*"
+    ],
+    "deny": [
+      "Bash(rm *)",
+      "Bash(del *)",
+      "Bash(rmdir *)",
+      "PowerShell(Remove-Item *)"
+    ]
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File avisar.ps1",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

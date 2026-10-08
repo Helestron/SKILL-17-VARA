@@ -1,0 +1,93 @@
+{
+  "_leia_me": "Configuração da 17ª Vara Cível da Capital. Não se edita durante a execução: o caminho informado no chat prevalece sobre as pastas daqui. Não registre senha, PIN, token nem dado de certificado.",
+  "unidade": {
+    "nome": "17ª Vara Cível da Capital — Fazenda Pública Estadual",
+    "tribunal": "Tribunal de Justiça do Estado de Alagoas",
+    "comarca": "Maceió",
+    "foro_cnj": "0001",
+    "competencia": "Feitos em que interessado o Estado de Alagoas, os entes de sua administração indireta e os delegatários de seus serviços públicos; execuções fiscais estaduais."
+  },
+  "pastas": {
+    "downloads": null,
+    "transcricoes": null,
+    "modelos_usuario": [],
+    "saida": null,
+    "_downloads": "Pasta de downloads (acervo) do Helestron. null = a informada no chat; senão, o 'acervo' do `helestron caminhos --json`; no Cowork, a pasta conectada.",
+    "_transcricoes": "Pasta das transcrições de audiências do Helestron. null = descoberta automática (chave com 'transcri' ou 'audienc' no `caminhos --json`; pastas 'Transcrições', 'transcricoes' ou 'Audiências' junto do acervo).",
+    "_modelos_usuario": "Pastas extras de modelos da vara (somente leitura), v.g. [\"C:/Sentença/Documentos\", \"C:/Despacho\", \"C:/Decisões Interlocutórias\"].",
+    "_saida": "null = <pasta de downloads>/_Vara17 (minutas/ e trabalho/); se for somente leitura, ./_Vara17."
+  },
+  "lote": {
+    "tamanho": 10
+  },
+  "formatacao": {
+    "_fonte_da_regra": "medida nos modelos da 17ª Vara (sentenças de promoção militar e decisão em MS tributário, 2026)",
+    "papel": "A4",
+    "margem_esquerda_cm": 3.32,
+    "margem_direita_cm": 3.32,
+    "margem_superior_cm": 2.54,
+    "margem_inferior_cm": 2.54,
+    "fonte": "Times New Roman",
+    "corpo_pt": 12,
+    "recuo_primeira_linha_cm": 2.5,
+    "entrelinhas": 1.5,
+    "espaco_antes_pt": 2,
+    "espaco_depois_pt": 2,
+    "citacao_fonte": "Courier New",
+    "citacao_pt": 10,
+    "citacao_recuo_esquerdo_cm": 4.0,
+    "citacao_entrelinhas": 1.0,
+    "citacao_espaco_pt": 1,
+    "numerar_paragrafos": false,
+    "_numerar_paragrafos": "Sempre false: a numeração é aplicada pelo usuário no editor do SAJ, no lançamento manual."
+  },
+  "redacao": {
+    "fecho_relatorio": "É o Relatório.",
+    "arquivamento_sentenca": "Com o trânsito em julgado, **arquivem-se os autos com a devida baixa**, independentemente de nova determinação.",
+    "fecho_sentenca": "P. R. I.",
+    "fecho_decisao": "Cumpra-se.",
+    "abertura_comando": "",
+    "_abertura_comando": "Vazio = comandos no imperativo impessoal, como nos modelos (\"Intime-se…\", \"Retire-se…\"). Preencha com \"À SPU,\" para abrir o parágrafo de comandos por essa expressão.",
+    "designacao_audiencia": "Secretaria da Vara",
+    "prazo_bancos_dias": 45,
+    "max_palavras_paragrafo": 110,
+    "max_palavras_paragrafo_bloqueante": 170
+  },
+  "fontes_oficiais": {
+    "_regra": "Lei: Planalto (federal) e SAPL/ALE (Alagoas). Jurisprudência: STF, STJ (inclusive o Portal de Dados Abertos) e TJAL; JusBrasil só para comprovar a autenticidade de inteiro teor ou ementa oficial. Ato normativo: CNJ.",
+    "legislacao": ["planalto.gov.br", "presidencia.gov.br", "al.al.leg.br", "sapl.al.al.leg.br"],
+    "jurisprudencia": ["stf.jus.br", "stj.jus.br", "tjal.jus.br"],
+    "autenticidade": ["jusbrasil.com.br"],
+    "atos_normativos": ["cnj.jus.br", "tjal.jus.br"]
+  },
+  "planalto": {
+    "CF": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicaocompilado.htm",
+    "ADCT": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicaocompilado.htm",
+    "CPC": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13105.htm",
+    "CC": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+    "CTN": "https://www.planalto.gov.br/ccivil_03/leis/l5172compilado.htm",
+    "CDC": "https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm",
+    "Lei n.º 6.830/1980": "https://www.planalto.gov.br/ccivil_03/leis/l6830.htm",
+    "Lei n.º 12.016/2009": "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2009/lei/l12016.htm",
+    "Lei n.º 9.494/1997": "https://www.planalto.gov.br/ccivil_03/leis/l9494.htm",
+    "Lei n.º 8.437/1992": "https://www.planalto.gov.br/ccivil_03/leis/l8437.htm",
+    "Lei n.º 12.153/2009": "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2009/lei/l12153.htm",
+    "Lei n.º 8.429/1992": "https://www.planalto.gov.br/ccivil_03/leis/l8429.htm",
+    "Lei n.º 7.347/1985": "https://www.planalto.gov.br/ccivil_03/leis/l7347orig.htm",
+    "Lei n.º 4.717/1965": "https://www.planalto.gov.br/ccivil_03/leis/l4717.htm",
+    "Decreto n.º 20.910/1932": "https://www.planalto.gov.br/ccivil_03/decreto/antigos/d20910.htm",
+    "Decreto-Lei n.º 3.365/1941": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3365.htm"
+  },
+  "jurisprudencia_rotas": {
+    "_aviso": "Pontos de partida oficiais. Valide na primeira execução e registre no caderno de bordo a rota que funcionou. Desafio de CAPTCHA ou de verificação anti-robô não se contorna: o usuário resolve na janela dele (referencias/pesquisa_fontes.md, item 4).",
+    "stj_dados_abertos": "https://dadosabertos.web.stj.jus.br",
+    "stj_pesquisa": "https://scon.stj.jus.br/SCON/pesquisar.jsp?b=ACOR&livre=<termos>",
+    "stj_sumulas": "https://scon.stj.jus.br/SCON/sumstj/",
+    "stj_teses": "https://scon.stj.jus.br/SCON/jt/",
+    "stj_repetitivos": "https://processo.stj.jus.br/repetitivos/temas_repetitivos/",
+    "stf_pesquisa": "https://jurisprudencia.stf.jus.br/pages/search?base=acordaos&queryString=<termos>",
+    "stf_sumulas": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=30&sumula=<n>",
+    "stf_repercussao_geral": "https://portal.stf.jus.br/jurisprudenciaRepercussao/tema.asp?num=<n>",
+    "tjal_pesquisa": "https://www2.tjal.jus.br/cjsg/resultadoCompleta.do?dados.buscaInteiroTeor=<termos>&dados.origensSelecionadas=T&tipoDecisaoSelecionados=A&dados.ordenarPor=dtPublicacao"
+  }
+}
