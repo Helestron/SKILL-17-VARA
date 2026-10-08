@@ -96,10 +96,14 @@ tempestividade de embargos de declaração.
 ## 5. Dispositivo, sucumbência e comandos
 
 - **Sentença**: "Diante do exposto, julgo …" (procedente a demanda para … / improcedente a demanda /
-  parcialmente procedente a demanda tão somente para …), objetivo, sem justificação — no dispositivo
+  parcialmente procedente a demanda tão somente para …) — ou, conforme o caso, "Diante do exposto,
+  homologo …", "concedo a segurança …", "denego a segurança …", "declaro extinto …" —, objetivo,
+  sem justificação — no dispositivo
   se comanda. Pedidos se negam por "indefiro", nunca "nego". Contra a Fazenda: a sujeição ou não à
   remessa necessária (art. 496 do CPC) e por quê.
 - **Decisão**: "Diante do exposto," ou "Do exposto,", com o núcleo decisório na primeira frase.
+- **Despacho**: é todo ele ato decisório — primeira pessoa admitida ("Defiro…", "Determino…"); os
+  comandos encadeados, sublinhados, até o gatilho final; "Cumpra-se.".
 - **Sucumbência**, em parágrafo logo após o dispositivo: honorários no percentual mínimo da faixa,
   com a base de cálculo (art. 85, § 3º); equidade só nas hipóteses do § 8º (Tema 1.076/STJ);
   ilíquida → percentual na liquidação (§ 4º, II); sucumbência recíproca (art. 86) ou mínima

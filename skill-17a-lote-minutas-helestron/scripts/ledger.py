@@ -15,6 +15,8 @@ Verificações (todos com --trabalho <dir>):
         é apontamento
 Cálculos (arquivo do processo, `autos.py caminhos N` → "calculos"):
   calc ARQ add --descricao TXT --expr "EXPRESSÃO" [--fls F] [--casas 2]
+        (números no formato brasileiro, "4.908,00", ou com ponto; argumentos separados por vírgula
+        e espaço: "round(4908 / 1412, 2)")
         avalia a expressão (só números e + - * / ** ( ), round, min, max) e registra entrada,
         operação, resultado e data — nenhuma conta entra na minuta "de cabeça"
   calc ARQ entrada --descricao TXT --valor V --fls F      registra valor colhido dos autos
@@ -151,6 +153,8 @@ def valida(e: dict) -> list:
 
 
 def add(trab, argv):
+    if not argv:
+        sys.exit("Uso: ledger.py add <arquivo.json>|- -t <T>")
     bruto = sys.stdin.read() if argv[0] == "-" else Path(argv[0]).read_text(encoding="utf-8-sig")
     dados = json.loads(bruto)
     lista = dados if isinstance(dados, list) else [dados]
@@ -244,6 +248,13 @@ def _avaliar(no):
     raise ValueError("expressão não permitida (só números, + - * / ** ( ), round, min, max, abs)")
 
 
+def _decimal_br(expr: str) -> str:
+    """'4.908,00' → 4908.00 e '1412,5' → 1412.5; a vírgula seguida de espaço separa argumentos
+    (round(x, 2), min(a, b))."""
+    expr = re.sub(r"\d{1,3}(?:\.\d{3})+(?:,\d+)?", lambda m: m.group(0).replace(".", "").replace(",", "."), expr)
+    return re.sub(r"(?<=\d),(?=\d)", ".", expr)
+
+
 def _brl(v: float) -> str:
     s = f"{v:,.2f}"
     return s.replace(",", "X").replace(".", ",").replace("X", ".")
@@ -270,7 +281,7 @@ def calc(argv):
         expr = comum.arg(resto, "--expr")
         casas = int(comum.arg(resto, "--casas", 2))
         try:
-            resultado = round(_avaliar(ast.parse((expr or "").replace(",", "."), mode="eval")), casas)
+            resultado = round(_avaliar(ast.parse(_decimal_br(expr or ""), mode="eval")), casas)
         except (ValueError, SyntaxError, ZeroDivisionError, TypeError) as e:
             sys.exit(f"cálculo recusado: {e}")
         item.update({"tipo": "calculo", "expressao": expr, "resultado": resultado,

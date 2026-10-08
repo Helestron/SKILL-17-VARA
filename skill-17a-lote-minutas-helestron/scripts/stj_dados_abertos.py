@@ -20,6 +20,7 @@ portal; a busca lê qualquer campo de texto e o mapeamento para o ledger tenta o
 Requisições identificadas, uma por vez, com pausa entre elas — é uso que o portal prevê. Rotas e
 nomes de conjunto conferidos na primeira execução vão para o caderno de bordo.
 """
+import http.client
 import json
 import os
 import re
@@ -62,7 +63,7 @@ def _get(url: str, binario=False, tentativas=3):
                 dados = r.read()
             time.sleep(1.0)
             return dados if binario else json.loads(dados.decode("utf-8-sig"))
-        except (urllib.error.URLError, TimeoutError, ValueError) as e:
+        except (urllib.error.URLError, OSError, http.client.HTTPException, ValueError) as e:
             erro = e
             time.sleep(2 ** (i + 1))
     raise RuntimeError(f"falha ao acessar {url}: {erro}")

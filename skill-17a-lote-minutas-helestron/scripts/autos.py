@@ -216,7 +216,8 @@ def _sigilosos_csv(pasta: Path) -> int:
     for f in list(pasta.rglob("relatorio*.csv"))[:50]:
         try:
             with open(f, encoding="utf-8-sig", newline="") as fh:
-                total += sum(1 for r in csv.DictReader(fh, delimiter=";") if (r.get("sigiloso") or "").lower() == "sim")
+                total += sum(1 for r in csv.DictReader(fh, delimiter=";")
+                             if (r.get("sigiloso") or "").lower() == "sim" or "processo sigiloso" in (r.get("processo") or ""))
         except (OSError, csv.Error):
             pass
     return total
@@ -249,8 +250,11 @@ def inventario(argv):
     lista = []
     if "--lista" in argv:
         i = argv.index("--lista")
-        lista = [x for x in argv[i + 1:] if not x.startswith("-")]
-        del argv[i:i + 1 + len(lista)]
+        j = i + 1
+        while j < len(argv) and not argv[j].startswith("-"):
+            j += 1
+        lista = argv[i + 1:j]
+        del argv[i:j]
     if lista_arq:
         lista += comum.extrair_numeros(Path(lista_arq).read_text(encoding="utf-8", errors="replace"))
     lista = [comum.completar_cnj(x) or x for x in lista]
@@ -269,20 +273,25 @@ def inventario(argv):
 
     achados, sem_numero = {}, 0
     ignorar = {"_Vara17", "_texto", "_controle", "_capa", "_minutas"}
-    for raiz, dirs, arqs in os.walk(pasta):
-        r = Path(raiz)
-        sigilo_dir = any("sigilos" in parte.lower() for parte in r.relative_to(pasta).parts)
-        dirs[:] = [d for d in dirs if not d.startswith(".") and d not in ignorar]
-        for a in arqs:
-            if not a.lower().endswith(".pdf"):
-                continue
-            n = comum.numero_cnj(Path(a).stem) or comum.numero_cnj(r.name)
-            if not n:
-                sem_numero += 1
-                continue
-            achados.setdefault(n, {"pdfs": [], "sigilo_dir": False})
-            achados[n]["pdfs"].append(str(r / a))
-            achados[n]["sigilo_dir"] |= sigilo_dir
+    raizes = [(pasta, False)]
+    sig = ph.pasta_sigilosos()  # o Helestron guarda os sigilosos fora do acervo
+    if sig and pasta not in sig.parents and sig != pasta and sig not in pasta.parents:
+        raizes.append((sig, True))
+    for base, toda_sigilosa in raizes:
+        for raiz, dirs, arqs in os.walk(base):
+            r = Path(raiz)
+            sigilo_dir = toda_sigilosa or any("sigilos" in parte.lower() for parte in r.relative_to(base).parts)
+            dirs[:] = [d for d in dirs if not d.startswith(".") and d not in ignorar]
+            for a in arqs:
+                if not a.lower().endswith(".pdf"):
+                    continue
+                n = comum.numero_cnj(Path(a).stem) or comum.numero_cnj(r.name)
+                if not n:
+                    sem_numero += 1
+                    continue
+                achados.setdefault(n, {"pdfs": [], "sigilo_dir": False})
+                achados[n]["pdfs"].append(str(r / a))
+                achados[n]["sigilo_dir"] |= sigilo_dir
 
     for n, a in achados.items():
         a["pdfs"].sort()
@@ -346,9 +355,9 @@ def inventario(argv):
         est["processos"][n]["lote"] = lote["id"]
     salvar_estado(trab, est)
 
-    print(f"TRABALHO={trab}")
-    print(f"MINUTAS={Path(est['minutas']) / lote['id']}")
-    print(f"TRANSCRICOES={transc or '(não localizada)'}")
+    print(f"TRABALHO={trab.as_posix()}")
+    print(f"MINUTAS={(Path(est['minutas']) / lote['id']).as_posix()}  (sigiloso: a saída de `autos.py caminhos N`)")
+    print(f"TRANSCRICOES={transc.as_posix() if transc else '(não localizada)'}")
     pend = sum(1 for p in est["processos"].values() if p["etapa"] not in ("entregue", "falhou"))
     print(f"processos na pasta: {len(est['processos'])} (pendentes: {pend}); PDFs sem número CNJ no nome: "
           f"{sem_numero}; sigilosos no relatório do Helestron: {_sigilosos_csv(pasta)}")
@@ -457,8 +466,11 @@ def extrair(pdfs, destino: Path) -> dict:
                             "pos": total + i + 1})
         total += len(textos)
     helestron = len(pdfs) == 1 and comum.numero_cnj(Path(pdfs[0]).stem) is not None
-    carimbados = sum(1 for p in paginas if p["carimbo"])
-    modo = "folhas" if helestron else ("carimbo" if carimbados > len(paginas) / 2 else "nao_garantida")
+    carimbados = [p for p in paginas if p["carimbo"]]
+    if len(carimbados) > len(paginas) / 2:  # o carimbo "fls. N" da margem prevalece sobre a posição no PDF
+        modo = "folhas" if all(p["carimbo"] == p["pos"] for p in carimbados) else "carimbo"
+    else:
+        modo = "folhas" if helestron else "nao_garantida"
     linhas = [f"# texto-vara17 1 | paginacao={modo} | paginas={len(paginas)} | fonte=extracao propria"]
     sem_texto = []
     for p in paginas:
@@ -736,12 +748,13 @@ def caminhos(argv):
     d = dados(est, p)
     base = pasta_proc(trab, d)
     base.mkdir(parents=True, exist_ok=True)
-    print(json.dumps({"numero": d["numero"], "classe": p.get("classe"), "texto": str(arquivo_texto(trab, p, d)),
-                      "pasta_processo": str(base), "dossie": str(base / "dossie.json"),
-                      "calculos": str(base / "calculos.json"), "minuta_txt": str(base / "minuta.txt"),
-                      "saida": str(pasta_minutas(est, p)), "ledger": str(trab / "verificacoes.json"),
-                      "transcricoes": [t["arquivo"] for t in d.get("transcricoes") or []],
-                      "trabalho": str(trab)}, ensure_ascii=False, indent=1))
+    print(json.dumps({"numero": d["numero"], "classe": p.get("classe"),
+                      "texto": arquivo_texto(trab, p, d).as_posix(), "pasta_processo": base.as_posix(),
+                      "dossie": (base / "dossie.json").as_posix(), "calculos": (base / "calculos.json").as_posix(),
+                      "minuta_txt": (base / "minuta.txt").as_posix(), "saida": pasta_minutas(est, p).as_posix(),
+                      "ledger": (trab / "verificacoes").as_posix(),
+                      "transcricoes": [Path(t["arquivo"]).as_posix() for t in d.get("transcricoes") or []],
+                      "trabalho": trab.as_posix()}, ensure_ascii=False, indent=1))
     return 0
 
 
@@ -768,13 +781,22 @@ def marcar(argv):
         sys.exit(f"Etapa inválida: {etapa}. Use: {', '.join(ETAPAS)}")
     p["etapa"] = etapa
     p.setdefault("historico", []).append(f"{datetime.now().isoformat(timespec='minutes')} {etapa}")
+    def juntar(destino: dict):
+        for k, v in campos.items():
+            if not v:
+                continue
+            if k in ("alerta", "justificativa") and destino.get(k) and v not in destino[k]:
+                destino[k] = destino[k] + " | " + v  # um registro por apontamento, sem sobrescrever
+            else:
+                destino[k] = v
+
     if p.get("ref"):
         guarda_sigilo(est, p)
         reais = comum.ler_json(p["ref"], {})
-        reais.setdefault(p["numero"], {}).update({k: v for k, v in campos.items() if v})
+        juntar(reais.setdefault(p["numero"], {}))
         comum.gravar_json(p["ref"], reais)
     else:
-        p.update({k: v for k, v in campos.items() if v})
+        juntar(p)
     salvar_estado(trab, est)
     print(f"posição {p.get('posicao')}: {etapa}")
     return 0

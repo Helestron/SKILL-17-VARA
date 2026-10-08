@@ -57,12 +57,16 @@ relatório de triagem, quadro-resumo ou síntese paralela.
 
 ## Scripts
 
-Só biblioteca padrão (o Python do Helestron basta), sempre com `-I` e caminho absoluto. Defina o
-Python em cada chamada de shell (cada chamada é um processo novo):
+Só biblioteca padrão (o Python do Helestron basta), sempre com `-I`, caminho absoluto e **todo
+caminho entre aspas** (`-t "<T>"`; os scripts imprimem caminhos com barras normais). Aberta pelo
+lançador, a sessão já traz o Python do Helestron em `HELESTRON_PYTHON`: chame
+`"$HELESTRON_PYTHON" -I "<pasta desta skill>/scripts/<script>.py" …` (no PowerShell,
+`& $env:HELESTRON_PYTHON -I …`) — é a forma que a lista de permissões do modo conservador reconhece.
+Sem a variável, defina o Python em cada chamada de shell (cada chamada é um processo novo):
 
 ```bash
 # Git Bash (Claude Code no Windows)
-PY=$(MSYS_NO_PATHCONV=1 reg query 'HKCU\Software\Helestron' /v Python 2>/dev/null | tr -d '\r' | sed -n 's/^ *Python *REG_SZ *//p')
+PY="$HELESTRON_PYTHON"; [ -f "$PY" ] || PY=$(MSYS_NO_PATHCONV=1 reg query 'HKCU\Software\Helestron' /v Python 2>/dev/null | tr -d '\r' | sed -n 's/^ *Python *REG_SZ *//p')
 [ -n "$PY" ] && PY="$(cygpath -u "$PY")"; [ -f "$PY" ] || PY="$(cygpath -u "$LOCALAPPDATA")/Programs/Helestron/python.exe"
 [ -f "$PY" ] || PY=python; S='<pasta desta skill>/scripts'
 "$PY" -I "$S/ponte_helestron.py" diagnostico
@@ -96,7 +100,7 @@ Leia `referencias/autos_helestron.md` na primeira execução.
    ordem dada, até 10, sem triagem; sem lista, o próximo lote da pasta. Guarde o `TRABALHO=` (`<T>`)
    e o `MINUTAS=` impressos. Número inválido, de outro foro ou ausente da pasta: uma linha no chat
    (o ausente, o usuário baixa pelo Helestron) e o lote segue.
-3. **Texto e mapa**: `autos.py preparar -t <T>` (texto do Helestron; senão, `helestron preparar`; senão,
+3. **Texto e mapa**: `autos.py preparar -t "<T>"` (texto do Helestron; senão, `helestron preparar`; senão,
    extração própria). Falha de um processo é registrada e não trava o lote.
 4. **Processo que termina em sequencial** (cumprimento de sentença, incidente): os autos de
    conhecimento e os demais sequenciais precisam estar na pasta; faltando, peça que o usuário os
@@ -117,7 +121,7 @@ Leia `referencias/pesquisa_fontes.md` e o módulo da matéria (`fazenda_publica_
 3. Rotas, nesta ordem: cache do ledger; **dados abertos do STJ** (`stj_dados_abertos.py`); páginas
    oficiais por WebFetch; navegador do usuário (o usuário resolve qualquer desafio de verificação);
    JusBrasil só para comprovar autenticidade. Assistente generativo é pista, nunca fonte.
-4. Grave tudo com `ledger.py add -t <T>`. **A minuta só cita entradas `VERIFIED`.** Prevalece o STJ
+4. Grave tudo com `ledger.py add <arquivo.json> -t "<T>"`. **A minuta só cita entradas `VERIFIED`.** Prevalece o STJ
    sobre o entendimento da unidade, com a divergência em vermelho na anotada.
 5. Todo cálculo por `ledger.py calc` (entrada com fls. e operação por expressão); refaça as contas
    das partes; o título governa o cumprimento de sentença.
@@ -137,7 +141,7 @@ os vícios listados no `estilo_modelos.md`, item 9.
    imputado; transcrição de audiência confrontada com o termo (trecho decisivo com
    `{{Conferir com a gravação}}`).
 3. **Redação** em `minuta.txt` (caminho em `autos.py caminhos N`), na marcação de
-   `referencias/formato_minuta.md`:
+   `referencias/formato_minuta.md`, com as diretivas `@ato` e `@processo` (esta dá nome ao arquivo):
    - **sem numeração de parágrafos** (o usuário a aplica no SAJ) e sem títulos internos;
    - relatório enxuto ("Trata-se de", partes em negrito, pretensão e pedidos em síntese fiel, um
      evento por frase, com fls.), fechado por "É o Relatório.";
@@ -148,28 +152,31 @@ os vícios listados no `estilo_modelos.md`, item 9.
    - **objetividade**: cada parágrafo necessário à conclusão; nada de repetição, precedentes em
      série, transcrição do que não decide ou digressão — e nenhum pedido, argumento, prova ou
      questão de ofício sem resposta, com aprofundamento do que é essencial;
-   - argumentação impessoal; primeira pessoa só no dispositivo e nas conclusões decisórias;
-   - "Diante do exposto, julgo …"; sucumbência; comandos no imperativo impessoal, sublinhados, sem
+   - argumentação impessoal; primeira pessoa só no dispositivo e nas conclusões decisórias (no
+     despacho, que é todo ele ato decisório, a primeira pessoa é admitida);
+   - "Diante do exposto, julgo …" (ou "homologo", "concedo a segurança", "denego a segurança",
+     "declaro extinto", conforme o caso); sucumbência; comandos no imperativo impessoal, sublinhados, sem
      ordenar à secretaria o que ela faz de ofício; arquivamento; "P. R. I." (sentença) ou
      "Cumpra-se." (decisão e despacho); sem local, data e assinatura;
    - vermelho (`{{ }}`) só para o que o magistrado precisa conferir e não está nos autos.
-4. `autos.py marcar N minutado --ato <ato> --resultado "<desfecho>" -t <T>`.
+4. `autos.py marcar N minutado --ato <ato> --resultado "<desfecho>" -t "<T>"`.
 
 # FASE 4 — Revisão e entrega em Word
 
 1. **Portão**: `verificar_minuta.py minuta.txt` até `OK`; reexamine cada apontamento e justifique o
    que ficar (`autos.py marcar N minutado --justificativa "…"`).
-2. **Citações e valores**: `ledger.py conferir minuta.txt -t <T> --calculos <calculos.json>` sem
+2. **Citações e valores**: `ledger.py conferir minuta.txt -t "<T>" --calculos "<calculos.json>"` sem
    pendência.
 3. **Revisão adversarial** por subagente independente (`referencias/redacao.md`, item 9), com foco
    também na verborragia; confira cada achado nos autos; corrija fundamentação e dispositivo juntos;
    portão de novo. Pare na rodada sem defeito confirmado.
-4. **Geração**: `gerar_minuta.py minuta.txt --saida "<MINUTAS>"` → `Minuta_<n>_<ato>_anotada.docx`
+4. **Geração**: `gerar_minuta.py minuta.txt --saida "<saida>"` — a `saida` de `autos.py caminhos N`
+   (para o sigiloso, é a pasta dele, nunca a pasta pública) → `Minuta_<n>_<ato>_anotada.docx`
    (para revisão: vermelhos, notas e ressalva) e `Minuta_<n>_<ato>.docx` (limpa, para copiar no SAJ),
    com o XML conferido. Gere sempre de novo depois de qualquer correção.
-5. `autos.py marcar N entregue --minuta "<caminho do .docx limpo>" -t <T>`; entregue cada minuta assim
+5. `autos.py marcar N entregue --minuta "<caminho do .docx limpo>" -t "<T>"`; entregue cada minuta assim
    que pronta (no Cowork, pela pasta conectada; no Claude Code, pelo caminho). Ao fim do lote,
-   `autos.py relatorio -t <T>` grava a `LISTA_TRABALHO.md` (situação, alertas, justificativas e
+   `autos.py relatorio -t "<T>"` grava a `LISTA_TRABALHO.md` (situação, alertas, justificativas e
    arquivos) junto das minutas.
 
 ---

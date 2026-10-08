@@ -55,7 +55,7 @@ a sequência previsível de atos até o desfecho (`redacao.md`, item 1).
 ## 3. Defesas e incidentes
 
 - **Embargos à execução** (art. 16 da LEF): 30 dias da garantia; **garantia integral é
-  requisito** (Tema 526? — REsp 1.272.827: a garantia é condição de admissibilidade e o efeito
+  requisito** (REsp 1.272.827: a garantia é condição de admissibilidade e o efeito
   suspensivo segue o art. 919, § 1º, do CPC [conferir]); relevância dos fundamentos e risco para
   o efeito suspensivo. **Exceção de pré-executividade** (Súmula 393): só matéria de ordem pública
   ou nulidade evidente sem dilação probatória; honorários quando acolhida com extinção.

@@ -106,7 +106,14 @@ def _paragrafo(p, anotada, F):
         return ""
     trechos = _italicizar(marcacao.runs(p["txt"]))
     if not anotada:
-        trechos = [r for r in trechos if not r["red"] or r["fica"]]
+        trechos = [dict(r) for r in trechos if not r["red"] or r["fica"]]
+        for a, b in zip(trechos, trechos[1:]):  # o apontamento removido não deixa espaço duplo
+            if a["t"].endswith(" ") and b["t"].startswith(" "):
+                b["t"] = b["t"].lstrip(" ")
+            if a["t"].endswith(" ") and b["t"][:1] in ",.;:)":
+                a["t"] = a["t"].rstrip(" ")
+        if trechos:
+            trechos[-1]["t"] = trechos[-1]["t"].rstrip()
     fonte, sz = (F["cfonte"], F["csz"]) if k == "cit" else (F["fonte"], F["sz"])
     todo_b = k in ("decisorio", "dispositivo", "relatorio")
     todo_u = k in ("decisorio", "dispositivo", "sublinhado", "comando")
@@ -185,7 +192,7 @@ def _gravar_docx(destino: Path, documento: str, estilos: str, titulo: str):
             f'<dc:language>pt-BR</dc:language><dcterms:created xsi:type="dcterms:W3CDTF">{agora}</dcterms:created>'
             '</cp:coreProperties>')
     destino.parent.mkdir(parents=True, exist_ok=True)
-    tmp = destino.with_suffix(".tmp")
+    tmp = destino.with_name(destino.name + ".tmp")
     with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("[Content_Types].xml", ct)
         z.writestr("_rels/.rels", rels)
@@ -193,7 +200,13 @@ def _gravar_docx(destino: Path, documento: str, estilos: str, titulo: str):
         z.writestr("word/document.xml", documento)
         z.writestr("word/styles.xml", estilos)
         z.writestr("docProps/core.xml", core)
-    tmp.replace(destino)
+    try:
+        tmp.replace(destino)
+        return destino
+    except PermissionError:  # aberto no Word: grava ao lado, com a hora, sem perder a versão nova
+        alt = destino.with_name(f"{destino.stem}_{datetime.now().strftime('%H%M%S')}{destino.suffix}")
+        tmp.replace(alt)
+        return alt
 
 
 def conferir_xml(limpa: Path, anotada: Path, pars) -> list:
@@ -215,10 +228,10 @@ def conferir_xml(limpa: Path, anotada: Path, pars) -> list:
         erros.append("transcrição sem Courier New")
     disp = next((p for p in pars if p["k"] == "dispositivo"), None)
     if disp:
-        inicio = marcacao.sem_marcas(disp["txt"])[:30]
+        inicio = re.sub(r"\s+", " ", escape(marcacao.sem_marcas(disp["txt"], manter_vermelho=True))).strip()[:25]
         for par in re.findall(r"<w:p>.*?</w:p>", x, re.S):
-            texto = "".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", par))
-            if texto.startswith(escape(inicio)):
+            texto = re.sub(r"\s+", " ", "".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", par))).strip()
+            if texto.startswith(inicio):
                 corridas = re.findall(r"<w:r>.*?</w:r>", par, re.S)
                 if not all("<w:b/>" in c and "<w:u " in c for c in corridas):
                     erros.append("dispositivo sem negrito e sublinhado")
@@ -254,18 +267,23 @@ def main(argv):
                               "pendencias_bloqueantes": veredito["pendencias_bloqueantes"]}, ensure_ascii=False, indent=1))
             return 1
         cab += [f"PENDÊNCIA: {x}" for x in veredito["pendencias_bloqueantes"]]
-    anotada = saida / f"{nome}_anotada.docx"
-    _gravar_docx(anotada, _documento(m["pars"], True, F, cab), _estilos(F), nome)
+    anotada = _gravar_docx(saida / f"{nome}_anotada.docx", _documento(m["pars"], True, F, cab), _estilos(F), nome)
     if rascunho and veredito["resultado"] != "OK":
         print(json.dumps({"resultado": "RASCUNHO", "anotada": str(anotada)}, ensure_ascii=False, indent=1))
         return 1
-    limpa = saida / f"{nome}.docx"
-    _gravar_docx(limpa, _documento(m["pars"], False, F, []), _estilos(F), nome)
-    erros = conferir_xml(limpa, anotada, m["pars"])
-    if erros:
-        limpa.unlink()
+    rascunho_limpa = _gravar_docx(saida / f"{nome}.docx.conferir", _documento(m["pars"], False, F, []), _estilos(F), nome)
+    erros = conferir_xml(rascunho_limpa, anotada, m["pars"])
+    limpa = None
+    if not erros:
+        limpa = saida / f"{nome}.docx"
+        try:
+            rascunho_limpa.replace(limpa)
+        except PermissionError:  # aberto no Word
+            limpa = saida / f"{nome}_{datetime.now().strftime('%H%M%S')}.docx"
+            rascunho_limpa.replace(limpa)
     print(json.dumps({"resultado": "OK" if not erros else "FALHA_XML", "erros_xml": erros,
-                      "anotada": str(anotada), "limpa": None if erros else str(limpa),
+                      "anotada": str(anotada), "limpa": str(limpa) if limpa else None,
+                      "limpa_reprovada": str(rascunho_limpa) if erros else None,
                       "apontamentos": veredito["apontamentos"]}, ensure_ascii=False, indent=1))
     return 0 if not erros else 1
 

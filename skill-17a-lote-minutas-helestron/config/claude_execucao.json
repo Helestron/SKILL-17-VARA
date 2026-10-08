@@ -37,7 +37,17 @@
       "PowerShell(New-Item *)",
       "PowerShell(Copy-Item *)",
       "mcp__claude-in-chrome__*",
-      "mcp__Claude_Browser__*"
+      "mcp__Claude_Browser__*",
+      "Bash(\"$HELESTRON_PYTHON\" *)",
+      "Bash(\"$PY\" *)",
+      "Bash(*python.exe\" *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(wc *)",
+      "Bash(env *)",
+      "PowerShell(& $env:HELESTRON_PYTHON *)",
+      "PowerShell(& $PY *)",
+      "PowerShell(Select-String *)"
     ],
     "deny": [
       "Bash(rm *)",

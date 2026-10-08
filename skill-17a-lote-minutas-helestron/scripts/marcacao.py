@@ -31,7 +31,9 @@ COMANDO_RE = re.compile(r"^(À SPU|À Secretaria|Ao Cartório|Intime(?:m)?-se|Ci
                         r"Proceda-se|Dê-se|Remetam-se|Remeta-se|Encaminhem-se|Encaminhe-se|Junte-se|Aguarde-se|"
                         r"Após|Em seguida|Serve a presente|Certifique-se|Anote-se|Anotem-se|Inclua-se|Exclua-se|"
                         r"Libere-se|Desbloqueie-se|Requisite-se|Comunique-se|Providencie|Promova|Abra-se|Tornem|"
-                        r"Voltem|Façam-se|Faça-se|Ciência)\b")
+                        r"Voltem|Façam-se|Faça-se|Ciência|Suspenda-se|Suspendam-se|Sobreste-se|Sobrestem-se|"
+                        r"Arquive-se|Arquivem-se|Designe-se|Decorrido|Decorridos|Retornem|Retorne|Aguardem|"
+                        r"Cumpra(?:m)?-se o|Publique-se o edital|Citem-se)\b")
 RELATORIO_RE = re.compile(r"^É o [Rr]elatório\.$")
 TIPOS_ATO = {"sentenca": "sentença", "sentença": "sentença", "decisao": "decisão", "decisão": "decisão",
              "despacho": "despacho"}
@@ -54,6 +56,7 @@ def ler(caminho) -> dict:
             continue
         if ln.startswith("@ato "):
             out["ato"] = _limpar_ato(ln[5:])
+            apos_disp = out["ato"] == "despacho"  # no despacho, os comandos se sublinham desde o início
             continue
         if ln.startswith("@processo "):
             out["processo"] = ln[10:].strip()

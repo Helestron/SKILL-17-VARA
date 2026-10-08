@@ -28,7 +28,7 @@ uma nomeação anterior do juízo) — perito de outra região eleva custo e pra
 4. **Impedimento e suspeição** (arts. 148, II, e 144–145 do CPC): antes de nomear, confira a
    autoria das peças técnicas e médicas dos autos — o médico assistente da parte, o contador que
    elaborou o cálculo, o engenheiro que assinou o laudo particular **não podem** ser o perito do
-   juízo. Registre a verificação no plano de análise.
+   juízo. Registre a verificação no dossiê do processo.
 5. **Honorários e adiantamento**: quem requer a perícia adianta os honorários (art. 95 do CPC);
    determinada de ofício ou requerida por ambas as partes, rateia-se. Beneficiário da gratuidade:
    observar a Resolução TJAL n.º 12/2012 (pagamento após o laudo, pelo tribunal) — indefira o

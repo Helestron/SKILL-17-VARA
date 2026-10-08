@@ -35,7 +35,7 @@ VEDADOS = {
     r"(?i)brevemente relatado|passo a decidir": "fórmula de outra unidade (o relatório fecha em É o Relatório.)",
     r"(?i)publica[cç][oõ]es e intima[cç][oõ]es via DJEN": "linha do DJEN não se usa na 17ª Vara",
     r"(?i)\bregistre-se\b|\bpublique-se\b": "publique-se/registre-se por extenso (o fecho da sentença é P. R. I.)",
-    r"(?i)\bà fls?\.": "crase indevida em 'à fls.' (usar 'à fl.' ou 'às fls.')",
+    r"(?i)\bà fls\.": "crase indevida em 'à fls.' (usar 'à fl.' ou 'às fls.')",
     r"(?i)conclus[ãa]o inexor[áa]vel que se chega": "regência: 'a que se chega'",
     r"(?i)\bpromoa[cç][aã]o\b": "erro de digitação: promoção",
 }
@@ -81,6 +81,8 @@ def verificar(caminho) -> dict:
     ato = m["ato"]
     if ato not in ("sentença", "decisão", "despacho"):
         pend.append("diretiva '@ato sentença|decisão|despacho' ausente ou inválida na primeira linha")
+    if not m["processo"] or not comum.numero_cnj(m["processo"]):
+        pend.append("diretiva '@processo <número CNJ>' ausente ou inválida (dá nome ao .docx; sem ela, as minutas se sobrescrevem)")
     pars = m["pars"]
     texto_pars = [p for p in pars if p["k"] not in ("nota",)]
     proprios = [p for p in texto_pars if p["k"] != "cit"]
@@ -92,6 +94,8 @@ def verificar(caminho) -> dict:
     i_disp = next((i for i, p in enumerate(texto_pars) if p["k"] == "dispositivo"), -1)
 
     def regiao(i):
+        if ato == "despacho":  # o despacho é todo ele ato decisório: 1ª pessoa admitida
+            return "dispositivo"
         if i_rel >= 0 and i < i_rel:
             return "relatorio"
         if i_disp >= 0 and i >= i_disp:
@@ -107,9 +111,11 @@ def verificar(caminho) -> dict:
         if i_rel < 0:
             pend.append(f"sentença sem o parágrafo '{cfg['fecho_relatorio']}'")
         if i_disp < 0:
-            pend.append("sentença sem dispositivo iniciado por 'Diante do exposto, julgo'")
-        elif not marcacao.sem_marcas(texto_pars[i_disp]["txt"]).startswith("Diante do exposto, julgo"):
-            pend.append("o dispositivo da sentença abre por 'Diante do exposto, julgo'")
+            pend.append("sentença sem dispositivo iniciado por 'Diante do exposto, julgo …'")
+        elif not re.match(r"Diante do exposto, (julgo|homologo|concedo|denego|declaro|extingo|reconheço|acolho|rejeito)\b",
+                          marcacao.sem_marcas(texto_pars[i_disp]["txt"])):
+            pend.append("o dispositivo da sentença abre por 'Diante do exposto, julgo' (ou homologo, concedo, denego, "
+                        "declaro, extingo, reconheço, acolho, rejeito)")
         if len(proprios) >= 2:
             pen = proprios[-2]["txt"]
             if "**arquivem-se os autos com a devida baixa**" not in pen or \
@@ -150,13 +156,15 @@ def verificar(caminho) -> dict:
             pend.append(f"marcação {e} na {ref}")
         if k == "cit":
             palavras_cit += w
-            serie_cit = serie_cit + 1 if t.startswith("- ") else 0
+            julgado = re.search(r"Rel(?:\.|ator|atora)\b|julgad[oa] (?:em|monocraticamente)|\bDJe?\b|\bj\.\s*\d|"
+                                r"\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}", t)
+            serie_cit = serie_cit + 1 if julgado else 0
             if serie_cit == 3:
                 avis.append(f"precedentes em série ({ref}): baste o mais pertinente, com a tese que decide")
             continue
         serie_cit = 0
         sem_aspas = re.sub(r'"[^"]*"|“[^”]*”', "", t)
-        if re.match(r"^\(?\d{1,3}[.)]\s+\S|^\d{1,3}\.\t|^[IVX]{1,5}\s*[-–—.)]\s", t):
+        if re.match(r"^\(?\d{1,3}[.)]\s+\S|^\d{1,3}\.\t|^[IVX]{1,5}\s*[-–—.)]\s", t) and k != "cit":
             pend.append(f"numeração manual de parágrafo na {ref} (a numeração é aplicada no SAJ)")
         if k == "corpo" and re.fullmatch(r"\*\*[^*]+\*\*\.?", bruto.strip()):
             pend.append(f"parágrafo inteiro em negrito na {ref} (epígrafe disfarçada; conclusão decisória vai com '!! ')")

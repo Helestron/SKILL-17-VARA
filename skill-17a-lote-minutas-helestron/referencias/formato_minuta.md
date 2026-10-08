@@ -11,7 +11,7 @@ Uma linha por parágrafo (linha em branco não conta):
 | Linha | Vira |
 |---|---|
 | `@ato sentença` / `@ato decisão` / `@ato despacho` | diretiva obrigatória (1ª linha útil) |
-| `@processo 0714346-41.2024.8.02.0001` | nome do arquivo e cabeçalho da anotada |
+| `@processo 0714346-41.2024.8.02.0001` | diretiva obrigatória: nome do arquivo (sem ela, as minutas se sobrescreveriam) e cabeçalho da anotada |
 | texto | parágrafo do corpo: Times 12, recuo 2,5 cm, 1,5, justificado |
 | `> texto` | transcrição em bloco: Courier New 10, recuo 4 cm, simples |
 | `!! texto` | parágrafo decisório: negrito e sublinhado inteiros (conclusão de preliminar, prejudicial ou incidente; tese central do mérito) |
@@ -21,8 +21,9 @@ Uma linha por parágrafo (linha em branco não conta):
 
 Automático: "É o Relatório." em negrito; o parágrafo que abre por "Diante do exposto" ou "Do exposto"
 em negrito e sublinhado (não marque `**` nele); depois do dispositivo, o parágrafo que abre por
-verbo de comando ("Intime-se", "Expeça-se", "Retire-se", "Após,", "Em seguida,", "Serve a
-presente", "À SPU,"…) sublinhado; itálico nos termos de `scripts/termos_italico.txt` (amplie a
+verbo de comando ("Intime-se", "Expeça-se", "Retire-se", "Suspenda-se", "Designe-se", "Após,",
+"Em seguida,", "Decorrido", "Serve a presente", "À SPU,"…) sublinhado — no despacho, desde o
+primeiro parágrafo; itálico nos termos de `scripts/termos_italico.txt` (amplie a
 lista quando preciso).
 
 Em linha: `**negrito**`, `__sublinhado__`, `*itálico*`, `{{apontamento vermelho}}` (só na anotada),
@@ -62,14 +63,16 @@ python -I scripts/verificar_minuta.py <minuta.txt>
 
 JSON com `OK` ou `BLOQUEADO`, `pendencias_bloqueantes` e `apontamentos`.
 
-- **Bloqueiam**: diretiva `@ato` ausente; **numeração manual de parágrafo**; título ou epígrafe
+- **Bloqueiam**: diretiva `@ato` ou `@processo` ausente; **numeração manual de parágrafo**; título ou epígrafe
   interna; parágrafo inteiro em negrito no corpo; vocabulário vedado (`redacao.md`, item 8);
-  linguagem de método; primeira pessoa fora do dispositivo e dos parágrafos decisórios (`!!`);
+  linguagem de método; primeira pessoa fora do dispositivo e dos parágrafos decisórios (`!!`) — no
+  despacho, admitida em todo o texto;
   sigla pronunciada como palavra em caixa alta; citação de mais de ~55 palavras entre aspas;
   "À SPU:"; perícia sem perito nomeado; marcação desbalanceada; parágrafo de mais de 170 palavras;
-  na sentença, a falta de "Trata-se de" com partes em negrito, de "É o Relatório.", de "Diante do
-  exposto, julgo", do parágrafo de arquivamento ou de "P. R. I." no fim; na decisão e no despacho,
-  a falta de "Cumpra-se." no fim.
+  na sentença e na decisão com relatório, a falta de "Trata-se de" com partes em negrito; na
+  sentença, a falta de "É o Relatório.", de "Diante do exposto, julgo" (ou homologo, concedo,
+  denego, declaro, extingo, reconheço, acolho, rejeito), do parágrafo de arquivamento ou de
+  "P. R. I." no fim; na decisão e no despacho, a falta de "Cumpra-se." no fim.
 - **Apontamentos** (reexamine um a um; o que ficar, justifique com `autos.py marcar … --justificativa`):
   gerúndio, travessão, dois-pontos fora da introdução de transcrição, parágrafo acima de 110
   palavras, palavra repetida quatro vezes, frase curta e solta, abertura que nega o direito em frase
@@ -85,10 +88,12 @@ O verificador é rede de segurança, **não substitui** a leitura crítica nem a
 python -I scripts/gerar_minuta.py <minuta.txt> --saida "<pasta das minutas do lote>"
 ```
 
-Roda o portão e, com `OK`, grava `Minuta_<processo>_<ato>_anotada.docx` (vermelhos, notas e a
+`<pasta>` é a `saida` de `autos.py caminhos N` (a do sigiloso fica na pasta dele). Roda o portão e, com `OK`, grava `Minuta_<processo>_<ato>_anotada.docx` (vermelhos, notas e a
 ressalva de apoio, para revisão do magistrado) e `Minuta_<processo>_<ato>.docx` (limpa, para copiar
 no editor do SAJ), e confere o XML de ambas (nenhum vermelho de apontamento, nota ou marca na limpa;
-nenhuma numeração automática; dispositivo em negrito e sublinhado; transcrições em Courier). Com
+nenhuma numeração automática; dispositivo em negrito e sublinhado; transcrições em Courier) — a
+limpa só vai para o lugar se a conferência passar (senão fica `….docx.conferir`, com o erro no JSON).
+Arquivo aberto no Word não impede a geração: a versão nova é gravada ao lado, com a hora no nome. Com
 `BLOQUEADO`, não grava nada; `--rascunho` grava só a anotada, com as pendências no topo, para
 exame. **Gere sempre de novo a partir do .txt vigente** depois de qualquer correção.
 

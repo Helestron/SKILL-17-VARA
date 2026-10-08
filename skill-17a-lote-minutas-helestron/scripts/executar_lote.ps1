@@ -65,12 +65,23 @@ if ($Instrucao) { $prompt += " $Instrucao" }
 $opcoes = @('--permission-mode', $(if ($Modo -eq 'lista') { 'dontAsk' } else { 'bypassPermissions' }), '--settings', $cfgArq)
 foreach ($d in $dirs + @($skill)) { $opcoes += @('--add-dir', $d) }
 
+# Python do Helestron para a sessao (a skill o le em HELESTRON_PYTHON; no modo lista, as regras de
+# permissao reconhecem a chamada "$HELESTRON_PYTHON" -I ...)
+$py = (Get-ItemProperty -LiteralPath 'HKCU:\Software\Helestron' -ErrorAction SilentlyContinue).Python
+if (-not ($py -and (Test-Path -LiteralPath $py))) { $py = Join-Path "$env:LOCALAPPDATA" 'Programs\Helestron\python.exe' }
+if (Test-Path -LiteralPath $py) { $env:HELESTRON_PYTHON = $py; $prompt += " Python do Helestron: '$py'." }
+
 Set-Location -LiteralPath $base
 $log = Join-Path $trabalho ('logs\execucao_' + (Get-Date -Format 'yyyyMMdd_HHmmss') + '.log')
 "[$(Get-Date -Format s)] modo=$Modo pasta=$base`r`n$prompt" | Out-File -LiteralPath $log -Encoding utf8
+# a partir daqui, linha na saida de erro do claude nao interrompe o lancador (PowerShell 5.1)
+$ErrorActionPreference = 'Continue'
 if ($SemInteracao) {
-  & $claude.Source -p $prompt @opcoes --output-format text 2>&1 | Tee-Object -FilePath $log -Append
-  exit $LASTEXITCODE
+  & $claude.Source -p $prompt @opcoes --output-format text 2>&1 | ForEach-Object { "$_" } |
+    Out-File -LiteralPath $log -Append -Encoding utf8
+  $codigo = $LASTEXITCODE
+  "[$(Get-Date -Format s)] fim, codigo $codigo" | Out-File -LiteralPath $log -Append -Encoding utf8
+  exit $codigo
 } else {
   & $claude.Source @opcoes $prompt
 }

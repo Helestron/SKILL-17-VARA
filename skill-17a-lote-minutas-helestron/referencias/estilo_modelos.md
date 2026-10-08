@@ -49,7 +49,8 @@ usuário entram em `config/vara.json > pastas.modelos_usuario`.
 **Decisão de liminar** (modelo 4): relatório de quatro ou cinco linhas ("Trata-se de Mandado de
 Segurança, com pedido de liminar, impetrado por … contra ato … imputado à …"; "Afirma que …";
 "Pugna pela concessão de medida liminar para …"; "Anexou documentos às fls. …"; "Custas iniciais
-pagas (fls. …)."; "É o relatório."); requisitos da medida (norma de regência); fato com as fls.;
+pagas (fls. …)."; "É o Relatório." — o modelo grafa "relatório" com minúscula; padronize pela
+sentença); requisitos da medida (norma de regência); fato com as fls.;
 probabilidade do direito com a súmula ou o precedente que a sustenta; perigo da demora concreto;
 o pedido que não prospera e por quê (no modelo, o pedido preventivo genérico contra apreensões
 futuras); "Diante do exposto, defiro, em parte, a liminar requerida para …"; "Serve a presente
@@ -100,7 +101,8 @@ conclusão antes de passar adiante**. Os modelos mostram o método em cada tipo 
   base em preterição ocorrida no ano de 2023."), e conclui.
 - **Impugnação à gratuidade**: renda concreta, com as fls., confrontada com o salário mínimo da
   época ("a holerite de janeiro de 2024 (fls. 50) aponta remuneração líquida de R$ 4.908,00. Isso
-  equivalia a pouco mais de três salários mínimos à época…"), e a falta de fato novo deduzido pelo
+  equivalia a pouco mais de três salários mínimos à época…" — com as correções do item 9: "o
+  holerite", "fl. 50"), e a falta de fato novo deduzido pelo
   impugnante. Benefício já indeferido e custas pagas: a impugnação é "inócua" (modelo 2).
 - **Prescrição**: transcreve a tese vinculante, explica a distinção que ela traça (ato comissivo:
   cinco anos da publicação; ato omissivo: trato sucessivo) e enquadra cada pedido do caso numa das

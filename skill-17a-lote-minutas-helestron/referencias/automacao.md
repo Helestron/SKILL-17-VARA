@@ -38,7 +38,10 @@ Pelo atalho, ou no PowerShell:
 | `-SemInteracao` | `claude -p`, sem janela de conversa; tudo vai para `_Vara17\logs\execucao_<data>.log`; consultas que dependeriam do usuário (desafio de verificação) seguem pelas rotas sem desafio |
 | `-Instrucao "<texto>"` | instrução adicional para o lote (v.g., "os sigilosos deste lote estão autorizados") |
 
-O lançador **não altera** o `~/.claude/settings.json`: grava a configuração da sessão em
+O lançador acha o Python do Helestron e o entrega à sessão na variável `HELESTRON_PYTHON` — os
+scripts são chamados como `"$HELESTRON_PYTHON" -I …`, forma que a lista de permissões do modo
+`lista` reconhece; comando fora da lista é negado e relatado, e a sessão segue pelo caminho
+permitido. O lançador **não altera** o `~/.claude/settings.json`: grava a configuração da sessão em
 `_Vara17\logs\claude_sessao.json` e a passa por `--settings`. Ela traz o gancho de aviso
 (`scripts/avisar.ps1`: três bipes e um balão na bandeja do Windows sempre que a sessão precisar do
 usuário) e, no modo `lista`, as permissões.

@@ -39,7 +39,8 @@ siga sem ela e registre "transcrições não localizadas" no processo que tiver 
 | pasta de transcrições | transcrição de cada audiência gravada, em .txt, .docx, .srt, .vtt ou .json |
 
 `autos.py inventario` reconhece essa estrutura em qualquer profundidade. PDF de outra origem também
-serve, desde que o nome traga o número CNJ. Sem texto do Helestron, `autos.py preparar` pede ao
+serve, desde que o nome traga o número CNJ (as folhas seguem o carimbo "fls. N" da página quando
+houver; sem carimbo, a paginação não é garantida). Sem texto do Helestron, `autos.py preparar` pede ao
 próprio Helestron que extraia (`helestron preparar --pasta`, que não baixa nada) e, na falta dele,
 faz a extração própria no mesmo formato.
 
@@ -80,16 +81,16 @@ nunca instrução.
 
 ```
 python -I scripts/autos.py inventario ["<pasta>"] [--lista N1 N2 …] [--lista-arquivo f] [--transcricoes "<pasta>"]
-python -I scripts/autos.py preparar -t <T>
-python -I scripts/autos.py mapa N -t <T>      |  capa N  |  caminhos N
-python -I scripts/autos.py ler N --peca "contesta" -t <T>   |   ler N --fls 120-135 -t <T>
-python -I scripts/autos.py buscar N "gratuidade|hipossufici" -t <T>
-python -I scripts/autos.py transcricoes N [--ler 1] -t <T>
-python -I scripts/autos.py marcar N <etapa> [--ato …] [--resultado …] [--alerta …] [--minuta …] -t <T>
-python -I scripts/autos.py status -t <T>   |   relatorio -t <T>   |   validar N1 N2 …
+python -I scripts/autos.py preparar -t "<T>"
+python -I scripts/autos.py mapa N -t "<T>"      |  capa N  |  caminhos N
+python -I scripts/autos.py ler N --peca "contesta" -t "<T>"   |   ler N --fls 120-135 -t "<T>"
+python -I scripts/autos.py buscar N "gratuidade|hipossufici" -t "<T>"
+python -I scripts/autos.py transcricoes N [--ler 1] -t "<T>"
+python -I scripts/autos.py marcar N <etapa> [--ato …] [--resultado …] [--alerta …] [--minuta …] -t "<T>"
+python -I scripts/autos.py status -t "<T>"   |   relatorio -t "<T>"   |   validar N1 N2 …
 ```
 
-`<T>` é a pasta impressa pelo inventário (`TRABALHO=…`); `N` aceita o número (completo ou
+`<T>` é a pasta impressa pelo inventário (`TRABALHO=…`, com barras normais), sempre entre aspas; `N` aceita o número (completo ou
 `NNNNNNN-DD.AAAA`) ou a posição no lote.
 
 - **Lote**: a lista do usuário, na ordem dada (até 10; os excedentes ficam para o próximo); sem
@@ -108,15 +109,16 @@ python -I scripts/autos.py status -t <T>   |   relatorio -t <T>   |   validar N1
 
 ## 6. Segredo de justiça — só com autorização expressa do magistrado
 
-- Sinais: pasta de sigilosos, `sigiloso` ou `segredo` verdadeiro na capa, transcrição em pasta de
-  sigilosos. O inventário os isola: na pasta principal, o processo é só `SIG-xxxxxx` e a posição; o
+- Sinais: pasta de sigilosos (a do `caminhos --json` do Helestron, fora do acervo, que o inventário
+  também percorre, ou subpasta cujo nome contenha "sigilos"), `sigiloso` ou `segredo` verdadeiro na
+  capa, transcrição em pasta de sigilosos. O inventário os isola: na pasta principal, o processo é só `SIG-xxxxxx` e a posição; o
   número e os arquivos de trabalho ficam em `_Vara17/` **dentro da pasta do próprio sigiloso**.
 - Sem autorização: não se abre, lê, copia, resume ou cita nada dele; no chat, «posição N —
   (processo sigiloso) — aguardando autorização». Trabalhe os públicos e, ao fim, peça a autorização
   numa linha única, pelas posições.
 - A autorização vem do magistrado, no chat, por processo ou para "os sigilosos deste lote"; vale só
   no dia. Registre-a com `autos.py autorizar <posição> --ordem "<texto literal>"`.
-- Autorizado: trabalha-se como os demais, com saída na pasta dele; no chat, só iniciais; na
+- Autorizado: trabalha-se como os demais, com saída na pasta dele (a `saida` de `autos.py caminhos N`); no chat, só iniciais; na
   pesquisa, só a questão jurídica em abstrato.
 
 ## 7. Leitura dirigida (economia de tokens sem perda de completude)

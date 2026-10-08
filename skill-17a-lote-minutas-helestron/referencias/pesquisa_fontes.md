@@ -40,15 +40,15 @@ tem entrada `VERIFIED` no ledger** (`scripts/ledger.py`); o que não se confirma
 
 ## 3. Rotas de acesso, nesta ordem
 
-1. **Cache do ledger**: `ledger.py buscar <termos> -t <T>` — entrada `VERIFIED` com menos de 30 dias
+1. **Cache do ledger**: `ledger.py buscar <termos> -t "<T>"` — entrada `VERIFIED` com menos de 30 dias
    se reaproveita sem nova pesquisa.
 2. **STJ — Portal de Dados Abertos** (via oficial para consulta automatizada, sem CAPTCHA):
 
    ```
-   python -I scripts/stj_dados_abertos.py conjuntos --filtro espelhos -t <T>
-   python -I scripts/stj_dados_abertos.py baixar --conjunto <id> --desde 202301 -t <T>
-   python -I scripts/stj_dados_abertos.py buscar "promoção militar interstício" --classe REsp -t <T>
-   python -I scripts/stj_dados_abertos.py tema 1076 -t <T>
+   python -I scripts/stj_dados_abertos.py conjuntos --filtro espelhos -t "<T>"
+   python -I scripts/stj_dados_abertos.py baixar --conjunto <id> --desde 202301 -t "<T>"
+   python -I scripts/stj_dados_abertos.py buscar "promoção militar interstício" --classe REsp -t "<T>"
+   python -I scripts/stj_dados_abertos.py tema 1076 -t "<T>"
    ```
 
    Os "espelhos de acórdãos" de cada órgão julgador (Primeira e Segunda Seções e Turmas para direito
@@ -98,9 +98,9 @@ digite nem armazene senha, PIN, token ou código.
   formato do ledger (`ledger.py`, docstring), com `VERIFIED` ou `REJECTED`.
 - O subagente recebe a questão jurídica **em abstrato** (nunca nome de parte nem dado de processo
   sigiloso) e a regra deste arquivo: fonte oficial, transcrição literal, nada de memória.
-- Grave com `ledger.py add <arquivo.json> -t <T>`; a gravação recusa campo obrigatório ausente e
+- Grave com `ledger.py add <arquivo.json> -t "<T>"`; a gravação recusa campo obrigatório ausente e
   fonte não oficial.
-- Antes da revisão adversarial, `ledger.py conferir <minuta.txt> -t <T> --calculos <calculos.json>`:
+- Antes da revisão adversarial, `ledger.py conferir <minuta.txt> -t "<T>" --calculos <calculos.json>`:
   precedente, súmula ou tema citado sem entrada `VERIFIED` bloqueia; valor em reais sem lastro no
   ledger de cálculos é apontamento.
 
