@@ -200,6 +200,61 @@ def main():
         rodar(S / "autos.py", "preparar", "-t", tmp / "trab_outra")
         r = rodar(S / "autos.py", "ler", "1", "--fls", "101-101", "-t", tmp / "trab_outra")
         checar("[fl. 101]" in r.stdout and "página 2" in r.stdout, "folha carimbada prevalece sobre a posição no PDF")
+
+        # 7. cumprimento de sentença (versão 2.1)
+        cs = RAIZ / "testes" / "minuta_exemplo_despacho_cs.txt"
+        r = rodar(S / "verificar_minuta.py", cs)
+        res = json.loads(r.stdout)
+        checar(res["resultado"] == "OK", f"despacho de cumprimento de exemplo deveria passar: {res['pendencias_bloqueantes']}")
+        checar(not any("Contadoria" in a for a in res["apontamentos"]), "'não é cabível o encaminhamento à Contadoria' não é remessa")
+        r = rodar(S / "gerar_minuta.py", cs, "--saida", saida)
+        xc = zipfile.ZipFile(json.loads(r.stdout)["limpa"]).read("word/document.xml").decode()
+        import re as _re
+        itens = [p for p in _re.findall(r"<w:p>.*?</w:p>", xc, _re.S) if 'w:ind w:left="2268"/>' in p or 'w:ind w:left="2551"/>' in p]
+        checar(len(itens) == 5, f"cinco itens recuados (achados {len(itens)})")
+        checar(all('<w:u w:val="single"/>' in p for p in itens), "itens do dispositivo sublinhados")
+        checar(any('w:ind w:left="2551"/>' in p for p in itens), "subitens com recuo de 4,5 cm")
+        base_cs = cs.read_text(encoding="utf-8")
+        r = rodar(S / "verificar_minuta.py", minuta(tmp, "cs_item.txt", subst(base_cs, "Decorrido o prazo fixado para a parte exequente",
+                                                                              "Decorrido o prazo fixado no item 4 para a parte exequente")))
+        checar("remissão a 'item N'" in r.stdout, "remissão a item N apontada")
+        r = rodar(S / "verificar_minuta.py", minuta(tmp, "cs_cont.txt", subst(base_cs, "Cumpra-se observada a sequência acima.",
+                                                                              "Remetam-se os autos à Contadoria.\nCumpra-se.")))
+        checar("Contadoria só se não houver meio eletrônico" in r.stdout, "remessa à Contadoria apontada")
+        r = rodar(S / "verificar_minuta.py", minuta(tmp, "cs_fichas.txt", subst(base_cs, "Cumpra-se observada a sequência acima.",
+                                                                                "Intime-se o Estado de Alagoas para juntar as fichas financeiras do exequente.\nCumpra-se.")))
+        checar("ônus do exequente" in r.stdout, "fichas financeiras impostas ao executado apontadas")
+        sent_cs = subst(subst(base, "Trata-se de Ação Ordinária proposta", "Trata-se de Cumprimento de Sentença proposto"),
+                        "Condeno a parte autora nas custas e em honorários", "Condeno a parte executada nas custas e em honorários")
+        r = rodar(S / "verificar_minuta.py", minuta(tmp, "cs_custas.txt", sent_cs))
+        checar("não há custas" in r.stdout, "custas no cumprimento de sentença apontadas")
+        for m in ("despacho_CS_adequar_requerimento_art534_Res21-2023_espolio_sem_inventariante.txt",
+                  "despacho_CS_habilitacao_sem_inventario_intima_herdeiras_indicar_endereco_de_outra_herdeira.txt",
+                  "despacho_CS_fichas_financeiras_onus_da_exequente.txt",
+                  "despacho_CS_cessao_de_credito_de_precatorio_Presidencia_TJ_reitera_Secretaria_nao_volta_concluso.txt"):
+            txt = (SK / "modelos" / m).read_text(encoding="utf-8")
+            checar("@ato despacho" in txt and "// rodapé: Maceió" in txt and "\n> " not in txt, f"modelo CS importado: {m}")
+        txt = (SK / "modelos" / "despacho_CS_adequar_requerimento_art534_Res21-2023_espolio_sem_inventariante.txt").read_text(encoding="utf-8")
+        checar(txt.count("\n+ ") == 6 and txt.count("\n++ ") == 4 and "\n5. " not in txt, "enumeração recuada e sem numeração digitada")
+        r = rodar(S / "importar_modelo.py", "buscar", "cumprimento habilitação herdeira")
+        checar("despacho_CS_habilitacao" in r.stdout, "busca de modelo de cumprimento")
+        # autos relacionados: incidente -01 com o principal na pasta
+        from reportlab.pdfgen import canvas
+        c = canvas.Canvas(str(tmp / "acervo" / f"{n['n1']}-01.pdf"))
+        for k, linha in enumerate(["CUMPRIMENTO DE SENTENCA. Planilha de calculo com IPCA-E.", "Certidao de obito. Espolio. Herdeiros.",
+                                   "Contrato de honorarios para destaque. Dados bancarios."]):
+            c.drawString(500, 810, f"fls. {k + 1}"); c.drawString(40, 780, linha); c.showPage()
+        c.save()
+        r = rodar(S / "autos.py", "inventario", tmp / "acervo", "--lista", n["n1"][:15] + "/01", "-t", tmp / "trab_cs")
+        checar(f"apoio: {n['n1']}" in r.stdout and "cumprimento de sentença" in r.stdout, "incidente aponta os autos de origem")
+        checar("prioridade" not in r.stdout, "incidente não herda a capa do principal")
+        r = rodar(S / "autos.py", "preparar", "-t", tmp / "trab_cs")
+        checar("(apoio)" in r.stdout, "preparar extrai os autos de apoio")
+        r = rodar(S / "autos.py", "requisitos", "1", "-t", tmp / "trab_cs")
+        checar("planilha ou memória de cálculo: fl. 1" in r.stdout and "óbito, espólio" in r.stdout and
+               "contrato de honorários (destaque): fl. 3" in r.stdout, "checklist de requisitos do cumprimento")
+        r = rodar(S / "autos.py", "inventario", tmp / "acervo", "--lista", "0750345-89.2023/02", "-t", tmp / "trab_cs2")
+        checar("não encontrados" in r.stdout, "incidente ausente relatado")
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     if falhas:

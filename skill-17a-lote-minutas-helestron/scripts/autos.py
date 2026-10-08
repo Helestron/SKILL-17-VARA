@@ -19,6 +19,10 @@ Subcomandos (todos aceitam --trabalho <dir>; o inventário cria e imprime a past
   ler N --fls A-B | --peca REGEX [--max 40000]
   buscar N REGEX [--contexto 250] [--max 30]
   transcricoes N [--ler [i]] [--max 60000]   lista as transcrições do processo; --ler mostra a i-ésima
+  requisitos N            cumprimento de sentença: pistas, com as fls., de cada requisito do requerimento
+                          (art. 534 do CPC e Resolução TJAL n.º 21/2023), da habilitação de sucessores e
+                          da fase (impugnação, requisitório, cessão), no processo e nos autos relacionados
+  relacionados N          autos de origem e demais sequenciais do mesmo número (título, fases anteriores)
   autorizar N --ordem "texto literal da autorização do magistrado"   (sigiloso; vale no dia)
   marcar N ETAPA [--ato X] [--resultado TXT] [--alerta TXT] [--minuta PATH] [--justificativa TXT]
   status | relatorio
@@ -156,6 +160,28 @@ def pasta_minutas(est: dict, p: dict) -> Path:
     return Path(est["minutas"]) / lote
 
 
+# ---------------------------------------------------------------- autos relacionados (cumprimento de sentença)
+
+def base_cnj(n: str) -> str:
+    """Número sem o sufixo do incidente: 0724179-30.2017.8.02.0001-01 → 0724179-30.2017.8.02.0001."""
+    return n[:25]
+
+
+def relacionados(est: dict, n: str) -> list:
+    """Processo de conhecimento e demais sequenciais do mesmo número presentes na pasta."""
+    return sorted(k for k in est["processos"] if k != n and not k.startswith("SIG-") and base_cnj(k) == base_cnj(n))
+
+
+def com_apoio(est: dict, numeros: list) -> list:
+    """Números do lote seguidos dos autos relacionados (apoio: não contam no lote nem geram minuta)."""
+    out = []
+    for n in numeros:
+        for x in [n] + (relacionados(est, n) if not n.startswith("SIG-") else []):
+            if x not in out:
+                out.append(x)
+    return out
+
+
 # ---------------------------------------------------------------- inventário
 
 def _achar(diretorio: Path, stem: str, seq: str, sufixo: str, palavra: str = ""):
@@ -166,8 +192,11 @@ def _achar(diretorio: Path, stem: str, seq: str, sufixo: str, palavra: str = "")
     for base in bases:
         if (base / nome_exato).exists() and (palavra or base.name == "_texto" or base == diretorio):
             return base / nome_exato
+    alvo = comum.numero_cnj(stem)
     for base in bases:
         for f in sorted(base.glob(f"*{seq}*{sufixo}")):
+            if alvo and comum.numero_cnj(f.name) != alvo:
+                continue  # o incidente (-01) não herda a capa nem o texto do principal, e vice-versa
             nome = f.name.lower()
             if palavra and palavra in nome:
                 return f
@@ -374,11 +403,20 @@ def inventario(argv):
             print(f"{i:2d}. (processo sigiloso) — aguardando autorização")
             continue
         val = comum.validar_cnj(n)
+        rel = relacionados(est, n)
+        p["relacionados"] = rel
+        cs = len(n) > 25 or re.search(r"(?i)cumprimento", p.get("classe") or "")
+        p["cumprimento"] = bool(cs)
+        sem_origem = len(n) > 25 and base_cnj(n) not in est["processos"]
         flags = [f for f, v in (("prioridade", p.get("prioridade")),
+                                ("cumprimento de sentença", cs),
+                                (f"apoio: {', '.join(rel)}", rel),
+                                (f"AUTOS DE ORIGEM AUSENTES ({base_cnj(n)}): baixe-os pelo Helestron", sem_origem),
                                 ("sem texto do Helestron", not p.get("texto_helestron")),
                                 (f"{len(p.get('transcricoes') or [])} transcrição(ões)", p.get("transcricoes")),
                                 (val.get("aviso") or val.get("motivo"), val.get("aviso") or not val["valido"])) if v]
         print(f"{i:2d}. {n} | {p.get('classe') or 'classe ?'} | {p['etapa']}" + (f" | {'; '.join(flags)}" if flags else ""))
+    salvar_estado(trab, est)
     return 0
 
 
@@ -575,7 +613,8 @@ def imprimir_mapa(n: str, mapa: dict, transcricoes=None, limite_pecas=70):
 def preparar(argv):
     trab = comum.pasta_trabalho(argv)
     est = carregar_estado(trab)
-    numeros = argv or lote_corrente(est)["numeros"]
+    lote_nums = lote_corrente(est)["numeros"]
+    numeros = argv or com_apoio(est, lote_nums)
     via_helestron_feito = set()
     for x in numeros:
         p = proc(est, x)
@@ -614,6 +653,8 @@ def preparar(argv):
         if p["etapa"] == "pendente":
             p["etapa"] = "preparado"
         rotulo = "(processo sigiloso, autorizado)" if p.get("sigiloso") else n
+        if not argv and n not in lote_nums:
+            rotulo += " (apoio)"
         print(f"{p.get('posicao', '?'):>2}. {rotulo} | {p.get('classe') or '?'} | {mapa['paginas']} pág. | "
               f"{len(mapa['pecas'])} peças | sem texto: {len(mapa['sem_texto'])}"
               + (" | PAGINAÇÃO NÃO GARANTIDA" if "nao_garantida" in mapa["cabecalho"] else "")
@@ -736,6 +777,75 @@ def transcricoes(argv):
     texto = ph.texto_transcricao(t["arquivo"])
     print(f"### Transcrição {qual} — {t['data']} — {Path(t['arquivo']).name}")
     print(texto[:maximo] + (f"\n… [corte em {maximo} caracteres]" if len(texto) > maximo else ""))
+    return 0
+
+
+REQUISITOS_CS = [
+    ("título: sentença ou acórdão", r"^(?:Senten[çc]a|Ac[óo]rd[ãa]o)\b|julgo (?:parcialmente )?(?:im)?procedente|"
+                                    r"Vistos, relatados e discutidos|\bACORDAM\b"),
+    ("trânsito em julgado", r"tr[âa]nsito em julgado|transitou|certid[ãa]o de tr[âa]nsito"),
+    ("planilha ou memória de cálculo", r"planilha|mem[óo]ria de c[áa]lculo|demonstrativo (?:discriminado )?de c[áa]lculo|ProjefWeb"),
+    ("índices de correção e juros (termos inicial e final)", r"IPCA-?E?|\bINPC\b|\bSELIC\b|poupan[çc]a|juros de mora|corre[çc][ãa]o monet"),
+    ("fichas financeiras / contracheques", r"fichas? financeiras?|contracheques?|holerites?|demonstrativo de pagamento"),
+    ("descontos: contribuição previdenciária", r"contribui[çc][ãa]o previdenci[áa]ria|desconto previdenci|PSSS|al[ií]quota previdenci"),
+    ("descontos: imposto de renda / RRA", r"imposto de renda|\bIRRF?\b|\bRRA\b|rendimentos recebidos acumuladamente"),
+    ("descontos: FGTS e outras contribuições", r"\bFGTS\b|Fundo de Garantia"),
+    ("conta bancária do credor e do advogado", r"conta banc[áa]ria|conta corrente|\bag[êe]ncia\b|chave PIX|dados banc[áa]rios"),
+    ("contrato de honorários (destaque)", r"contrato de (?:presta[çc][ãa]o de servi[çc]os|honor[áa]rios)|destaque (?:dos|de) honor"),
+    ("óbito, espólio, inventário e herdeiros", r"[óo]bito|falecid[oa]|esp[óo]lio|invent[áa]rio|inventariante|herdeir|formal de partilha|escritura p[úu]blica|vi[úu]v[oa]|c[ôo]njuge"),
+    ("impugnação da Fazenda (art. 535)", r"impugna[çc][ãa]o ao cumprimento|impugna[çc][ãa]o [àa] execu|excesso de execu[çc][ãa]o|art\.?\s*535"),
+    ("requisitório (RPV ou precatório)", r"\bRPV\b|requisi[çc][ãa]o de pequeno valor|precat[óo]rio|requisit[óo]rio"),
+    ("cessão de crédito", r"cess[ãa]o de cr[ée]dito|cession[áa]ri"),
+    ("pagamento, alvará e levantamento", r"alvar[áa]|levantamento|comprovante de pagamento|dep[óo]sito judicial"),
+]
+
+
+def relacionados_cmd(argv):
+    trab = comum.pasta_trabalho(argv)
+    est = carregar_estado(trab)
+    p = proc(est, argv[0])
+    d = dados(est, p)
+    rel = relacionados(est, d["numero"])
+    if not rel:
+        print("Sem autos relacionados na pasta" + (f" — os autos de origem ({base_cnj(d['numero'])}) não foram baixados: "
+              "peça ao usuário que os baixe pelo Helestron." if len(d["numero"]) > 25 else "."))
+        return 0
+    for n in rel:
+        q = est["processos"][n]
+        print(f"{n} | {q.get('classe') or '?'} | texto: {arquivo_texto(trab, q, q).as_posix()}"
+              + ("" if arquivo_texto(trab, q, q).exists() else " (rode `autos.py preparar`)"))
+    return 0
+
+
+def requisitos(argv):
+    """Pistas, com as fls., de cada requisito do cumprimento de sentença — no processo e nos relacionados.
+    Pista não é prova: confirme lendo as fls. indicadas."""
+    trab = comum.pasta_trabalho(argv)
+    maximo = int(comum.arg(argv, "--max", 6))
+    est = carregar_estado(trab)
+    p = proc(est, argv[0])
+    d = dados(est, p)
+    alvos = [(d["numero"], arquivo_texto(trab, p, d))]
+    for n in relacionados(est, d["numero"]):
+        q = est["processos"][n]
+        alvos.append((n, arquivo_texto(trab, q, q)))
+    compiladas = [(nome, re.compile(rx, re.I)) for nome, rx in REQUISITOS_CS]
+    achados = {nome: [] for nome, _ in REQUISITOS_CS}
+    for n, arq in alvos:
+        if not arq.exists():
+            print(f"(texto de {n} ainda não extraído: rode `autos.py preparar {n}`)")
+            continue
+        rotulo = "" if n == d["numero"] else f"{n} "
+        for marca, doc, buf in paginas_do_texto(arq):
+            corpo = (doc or "") + " " + " ".join(buf)  # o marcador da peça também é pista (v.g., "Sentença")
+            for nome, rx in compiladas:
+                if len(achados[nome]) < maximo and rx.search(corpo):
+                    achados[nome].append(f"{rotulo}{marca}" + (f" [{doc[:40]}]" if doc else ""))
+    print(f"REQUISITOS — {d['numero']} (pistas por palavra-chave; confirme lendo as fls.)")
+    for nome, lst in achados.items():
+        print(f"- {nome}: " + ("; ".join(lst) if lst else "NÃO LOCALIZADO"))
+    if len(d["numero"]) > 25 and base_cnj(d["numero"]) not in est["processos"]:
+        print(f"! autos de origem {base_cnj(d['numero'])} ausentes da pasta: o título não foi conferido")
     return 0
 
 
@@ -863,7 +973,8 @@ def validar(argv):
 
 COMANDOS = {"inventario": inventario, "preparar": preparar, "caminhos": caminhos, "mapa": mapa_cmd,
             "capa": capa_cmd, "ler": ler, "buscar": buscar, "transcricoes": transcricoes, "autorizar": autorizar,
-            "marcar": marcar, "status": status, "relatorio": relatorio, "validar": validar}
+            "marcar": marcar, "status": status, "relatorio": relatorio, "validar": validar,
+            "requisitos": requisitos, "relacionados": relacionados_cmd}
 
 
 def main(argv):

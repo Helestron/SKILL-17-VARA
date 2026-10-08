@@ -86,6 +86,7 @@ python -I scripts/autos.py mapa N -t "<T>"      |  capa N  |  caminhos N
 python -I scripts/autos.py ler N --peca "contesta" -t "<T>"   |   ler N --fls 120-135 -t "<T>"
 python -I scripts/autos.py buscar N "gratuidade|hipossufici" -t "<T>"
 python -I scripts/autos.py transcricoes N [--ler 1] -t "<T>"
+python -I scripts/autos.py relacionados N -t "<T>"   |   requisitos N -t "<T>"   # cumprimento de sentença
 python -I scripts/autos.py marcar N <etapa> [--ato …] [--resultado …] [--alerta …] [--minuta …] -t "<T>"
 python -I scripts/autos.py status -t "<T>"   |   relatorio -t "<T>"   |   validar N1 N2 …
 ```
@@ -100,9 +101,11 @@ python -I scripts/autos.py status -t "<T>"   |   relatorio -t "<T>"   |   valida
 - **Foro**: o foro da vara é `0001`. Número de outro foro é processo de outra comarca: registre e
   não minute sem ordem do magistrado.
 - **Autos de origem**: processo que termina em sequencial (cumprimento de sentença `-01`,
-  incidentes) exige o de conhecimento e os demais sequenciais na mesma pasta — se faltarem, peça ao
-  usuário que os baixe pelo Helestron e registre em vermelho o que deles depender. Não contam no
-  limite de 10 nem geram minuta própria.
+  incidentes) exige o de conhecimento e os demais sequenciais na mesma pasta. O inventário os aponta
+  ("apoio: …") e avisa quando faltam ("AUTOS DE ORIGEM AUSENTES") — peça ao usuário que os baixe pelo
+  Helestron e registre em vermelho o que deles depender. `preparar` extrai o texto deles junto com o
+  lote; não contam no limite de 10 nem geram minuta própria. O incidente nunca herda a capa nem o
+  texto do principal, e vice-versa.
 - **Estado** (`estado.json`): etapas pendente → preparado → analisado → pesquisado → minutado →
   revisado → entregue (ou falhou), gravadas a cada transição. A retomada é idempotente: a mesma
   lista retoma o lote aberto; nada concluído se refaz.

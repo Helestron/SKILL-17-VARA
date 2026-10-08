@@ -38,6 +38,8 @@
     "citacao_recuo_esquerdo_cm": 4.0,
     "citacao_entrelinhas": 1.0,
     "citacao_espaco_pt": 1,
+    "item_recuo_cm": 4.0,
+    "subitem_recuo_cm": 4.5,
     "numerar_paragrafos": false,
     "_numerar_paragrafos": "Sempre false: a numeração é aplicada pelo usuário no editor do SAJ, no lançamento manual."
   },

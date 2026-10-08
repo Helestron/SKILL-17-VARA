@@ -1,0 +1,16 @@
+// Despacho fictício de teste (cumprimento de sentença: adequação ao art. 534 do CPC).
+@ato despacho
+@processo 0714346-41.2024.8.02.0001-01
+Trata-se de Cumprimento de Sentença proposto por **Fulano de Tal** em face do **Estado de Alagoas**, todos qualificados.
+Inicialmente, registre-se que não é cabível o encaminhamento dos autos à Contadoria Judicial Unificada, uma vez que existem meios eletrônicos aptos à elaboração do cálculo, cujos dados estão ao alcance de quem assiste a parte exequente.
+Diante do exposto, determino a intimação da parte exequente para, no prazo de 15 (quinze) dias, sob pena de extinção do processo sem resolução do mérito, trazer aos autos:
++ i) **planilha de cálculo atualizada**, com o índice de correção monetária, os juros e as respectivas taxas e os termos inicial e final, observado o título executivo judicial;
++ ii) a especificação dos **descontos obrigatórios**, no tocante a:
+++ a) **contribuições previdenciárias**, com o órgão previdenciário e o respectivo CNPJ;
+++ b) **imposto de renda**, com o número de meses, no caso de rendimentos recebidos acumuladamente;
++ iii) a **conta bancária** do credor originário e de seu advogado.
+Com a manifestação da parte exequente no prazo assinalado, intime-se o Estado de Alagoas para, no prazo de 30 (trinta) dias, querendo, impugnar o cumprimento de sentença, oportunidade em que deverá se manifestar acerca dos descontos obrigatórios informados, sob pena de preclusão.
+Após a impugnação, intime-se a parte exequente para que se manifeste no prazo de 15 (quinze) dias. Exaurido o prazo, conclusos na fila "após Sentença".
+Não havendo impugnação ou havendo concordância expressa da Fazenda Pública com os cálculos da parte exequente, imediatamente conclusos na fila "após Sentença".
+Decorrido o prazo fixado para a parte exequente sem o cumprimento da determinação, tornem os autos imediatamente conclusos.
+Cumpra-se observada a sequência acima.

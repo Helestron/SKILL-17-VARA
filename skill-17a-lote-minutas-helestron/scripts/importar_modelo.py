@@ -148,20 +148,31 @@ def importar(arq: Path) -> str:
     for p in pars:
         t = p["texto"]
         if not comecou:
+            out_cab = f"// cabeçalho: {t}"
+            if t == titulo and titulo:  # o corpo começa logo depois do título (S E N T E N Ç A, D E S P A C H O…)
+                comecou = True
+                out.append(out_cab)
+                continue
             if re.match(r"^(\d+\.\s*)?Trata-se\b", t) or re.match(r"^(Vistos|Cuida-se|Tratam os autos)", t):
                 comecou = True
             else:
-                out.append(f"// cabeçalho: {t}")
+                out.append(out_cab)
                 continue
+        if not terminou and re.search(r"datado eletronicamente|^JUIZA? DE DIREITO$", t):
+            terminou = True  # local, data e assinatura vêm do modelo do SAJ
         if terminou:
             out.append(f"// rodapé: {t}")
             continue
         visiveis = [r for r in p["runs"] if r["t"].strip()]
-        cit = p["recuo"] >= 1500 or (visiveis and sum(r["courier"] for r in visiveis) > len(visiveis) / 2)
+        courier = bool(visiveis) and sum(r["courier"] for r in visiveis) > len(visiveis) / 2
+        cit = courier
+        item = not courier and p["recuo"] >= 1500  # enumeração recuada em Times (i), ii)… a), b)…)
         todo_b = bool(visiveis) and all(r["b"] for r in visiveis)
         todo_u = bool(visiveis) and all(r["u"] for r in visiveis)
         if cit:
             out.append("> " + _inline(p["runs"]))
+        elif item:
+            out.append(("++ " if p["recuo"] >= 2400 else "+ ") + _inline(p["runs"], tirar=("u",) if todo_u else ()))
         elif re.match(r"^(Diante do exposto|Do exposto|Ante o exposto|Pelo exposto)", t):
             out.append(_inline(p["runs"], tirar=("b", "u")))
         elif re.fullmatch(r"É o [Rr]elatório\.", t):
@@ -172,7 +183,9 @@ def importar(arq: Path) -> str:
             out.append("__ " + _inline(p["runs"], tirar=("u",)))
         else:
             out.append(_inline(p["runs"]))
-        if re.fullmatch(r"P\. ?R\. ?I\.|Cumpra-se\.", t):
+        if not cit:  # numeração digitada à mão no modelo ("5.", "**6.**", "__9.__") não entra na marcação
+            out[-1] = re.sub(r"^((?:!! |__ |\+\+ |\+ )?)(?:\*\*|__)*\d{1,3}\.(?:\*\*|__)*\s+", r"\1", out[-1])
+        if re.fullmatch(r"P\. ?R\. ?I\.", t) or (re.match(r"^Cumpra-se\b", t) and len(t.split()) <= 8):
             terminou = True
     return "\n".join(out) + "\n"
 

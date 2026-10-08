@@ -1,0 +1,29 @@
+// modelo importado de: Despacho - CS - Pedido de habilitação na inicial do cumprimento - nome do espólio mas qualificou herdeiros - adequar ao art. 534 e comprovar inventário.rtf
+@ato despacho
+@processo 0711612-59.2020.8.02.0001-03
+// cabeçalho: PROCESSO N° 0711612-59.2020.8.02.0001/03
+// cabeçalho: CUMPRIMENTO DE SENTENÇA
+// cabeçalho: AUTOR:  MARIA EULÁLIA VITAL PASSOS
+// cabeçalho: D E S P A C H O
+Trata-se de cumprimento de sentença proposto pelo **"Espólio de Maria Eulália Vital Passos"** em face da **Alagoas Previdência**, todos qualificados.
+Inicialmente, registre-se que não é cabível o encaminhamento dos autos à Contadoria Judicial Unificada (CJU), visto que existem meios eletrônicos aptos a realizar o cálculo, bastando incluir as informações pertinentes, tais como periodicidade, valor principal, juros e multa, dados que estão disponíveis ao conhecimento de quem assiste a parte exequente.
+Outrossim, verifica-se que os requerentes apresentaram-se em nome do **"Espólio de Maria Eulália Vital Passos"**, qualificando-se como herdeiros, sem, contudo, indicar a existência de inventário, judicial ou extrajudicial, tampouco a nomeação de inventariante. Ocorre que o espólio, enquanto universalidade de bens e direitos deixados pelo *de cujus*, somente adquire representação processual regular por meio do inventariante nomeado em inventário, o que não restou demonstrado nos autos. A qualificação como "Espólio" sem a correspondente comprovação de inventariante configura, portanto, irregularidade na representação processual.
+Ademais, verifica-se a necessidade de adequação do requerimento de cumprimento de sentença aos termos do art. 534 do CPC e da Resolução TJ/AL nº 21/2023. **__Desse modo, determino a intimação da parte exequente para, no prazo de 15 (quinze) dias, sob pena de extinção do processo sem resolução do mérito, trazer aos autos:__**
++ i) **planilha de cálculo atualizada**, com a indicação do índice de correção monetária adotado, dos juros aplicados e as respectivas taxas, dos termos inicial e final dos juros e da correção monetária utilizados, observado o título executivo judicial, e utilizando-se, preferencialmente, do programa de cálculos judiciais ProjefWeb (https://www.jfrs.jus.br/projefweb/);
++ ii) na hipótese de existir mais de um devedor, a **delimitação de sua responsabilidade individualizada**, em conformidade com o título executivo judicial, com a indicação do percentual e valor devido por cada um;
++ iii) a especificação da incidência, percentuais e valores de eventuais **descontos obrigatórios** realizados, no tocante a:
+++ a) **contribuições previdenciárias**, bem como a indicação do órgão previdenciário com o respectivo CNPJ;
+++ b) contribuições para o Fundo de Garantia por Tempo de Serviço – **FGTS**;
+++ c) **imposto de renda** (e número de meses, para o caso de RRA);
+++ d) de **outras contribuições** devidas, se houver.
++ iv) a **conta bancária** do credor originário e de seu(s) advogado(s), na qual deverão ser disponibilizados os valores do(s) requisitório(s);
++ v) o **contrato de honorários advocatícios**, na hipótese de existir interesse da representação judicial da parte exequente em realizar o destaque diretamente no(s) requisitório(s) a ser(em) expedido(s);
++ vi) **informem se há inventário, judicial ou extrajudicial, em nome do Espólio, anexando, em caso positivo, o termo de nomeação de inventariante ou outro documento equivalente, além da sentença ou da escritura pública de inventário, se houver.**
+!! Com a manifestação da parte exequente no prazo assinalado, intime-se a Alagoas Previdência para, no prazo de 30 (trinta) dias, querendo, impugnar o cumprimento de sentença, oportunidade em que deverá se manifestar acerca dos descontos obrigatórios informados pela parte exequente, indicando expressamente o valor e o percentual dos descontos que entende devidos, além das contas bancárias para o depósito das retenções de imposto de renda e contribuição previdenciária, se houver, sob pena de preclusão. Deverá, outrossim, manifestar-se acerca do pedido de habilitação.
+__ Após a impugnação, **intime-se a parte exequente para que se manifeste** no prazo de 15 (quinze) dias. Exaurido o prazo, conclusos na fila **"após Sentença"**.
+__ **Não havendo impugnação** ou havendo **concordância expressa da Fazenda Pública** com os cálculos da parte exequente, imediatamente conclusos na fila **"após Sentença"**.
+__ Decorrido o prazo fixado para a parte exequente no item 4 sem o cumprimento da determinação, tornem os autos imediatamente conclusos.
+Cumpra-se observada a sequência acima.
+// rodapé: Maceió, datado eletronicamente.
+// rodapé: ALBERTO JORGE CORREIA DE BARROS LIMA
+// rodapé: JUIZ DE DIREITO

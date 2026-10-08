@@ -1,0 +1,16 @@
+// modelo importado de: Despacho - CS - Intimação da exequente para juntar fichas financeiras - obrigação da exequente não se transfere ao executado.rtf
+@ato despacho
+@processo 0732827-28.2019.8.02.0001
+// cabeçalho: PROCESSO N° 0732827-28.2019.8.02.0001
+// cabeçalho: PROCEDIMENTO COMUM CÍVEL
+// cabeçalho: REQUERENTE:  ADRIANE DE ARAÚJO SANTIAGO
+// cabeçalho: RÉU:  AL PREVIDÊNCIA, SERVIÇO  SOCIAL AUTÔNOMO, PESSOA JURÍDICA DE DIREITO PRIVADO
+// cabeçalho: D E S P A C H O
+Trata-se de Cumprimento de Sentença em que a parte exequente requer a intimação da Fazenda Pública executada para que junte aos autos as fichas financeiras correspondentes ao período de 2018 a 2026.
+Sucede que as fichas financeiras são de fácil obtenção pela própria interessada, seja por meio de requerimento administrativo, seja por acesso a sistemas eletrônicos de consulta próprios do beneficiário, não havendo, portanto, óbice ou dificuldade que justifique a transferência de tal encargo à parte executada.
+Diante do exposto, determino a intimação da exequente para que, no prazo de 15 (quinze) dias, anexe aos autos as fichas financeiras correspondentes a todo período executado e adeque os cálculos da execução, sob pena de extinção do processo sem resolução do mérito.
+__ Exaurido o prazo, conclusos na fila **"após Sentença"** para análise do cumprimento da determinação.
+Cumpra-se.
+// rodapé: Maceió, datado eletronicamente.
+// rodapé: ALBERTO JORGE CORREIA DE BARROS LIMA
+// rodapé: JUIZ DE DIREITO

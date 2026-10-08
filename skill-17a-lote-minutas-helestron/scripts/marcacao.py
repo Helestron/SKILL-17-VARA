@@ -11,6 +11,9 @@ Prefixos de linha:
   !! texto  parágrafo decisório em destaque (negrito e sublinhado inteiros): conclusão de preliminar,
             prejudicial ou incidente e a tese central do mérito, como nos modelos
   __ texto  parágrafo inteiro sublinhado (comandos de cumprimento)
+  + texto   item de enumeração recuado (4 cm), v.g. "i) planilha de cálculo atualizada…"
+  ++ texto  subitem recuado (4,5 cm), v.g. "a) contribuições previdenciárias…"
+            (itens que seguem o dispositivo ou um comando saem sublinhados, como nos modelos)
   %% texto  nota só da versão anotada (vermelho)
   // texto  comentário (ignorado)
 Automático: "É o Relatório." em negrito; o dispositivo ("Diante do exposto…", "Do exposto…") em
@@ -33,7 +36,10 @@ COMANDO_RE = re.compile(r"^(À SPU|À Secretaria|Ao Cartório|Intime(?:m)?-se|Ci
                         r"Libere-se|Desbloqueie-se|Requisite-se|Comunique-se|Providencie|Promova|Abra-se|Tornem|"
                         r"Voltem|Façam-se|Faça-se|Ciência|Suspenda-se|Suspendam-se|Sobreste-se|Sobrestem-se|"
                         r"Arquive-se|Arquivem-se|Designe-se|Decorrido|Decorridos|Retornem|Retorne|Aguardem|"
-                        r"Cumpra(?:m)?-se o|Publique-se o edital|Citem-se)\b")
+                        r"Cumpra(?:m)?-se o|Publique-se o edital|Citem-se|Por derradeiro|Exaurido|Exauridos|"
+                        r"Com a indicação|Com a manifestação|Com o cumprimento|Com a juntada|Com a resposta|"
+                        r"Mantenha-se|Mantenham-se|Determino, ainda|Não havendo|Havendo|Ultimad[oa]s?)\b")
+FECHO_DECISAO_RE = re.compile(r"^Cumpra-se(,? observada a sequência acima)?\.$")
 RELATORIO_RE = re.compile(r"^É o [Rr]elatório\.$")
 TIPOS_ATO = {"sentenca": "sentença", "sentença": "sentença", "decisao": "decisão", "decisão": "decisão",
              "despacho": "despacho"}
@@ -46,10 +52,12 @@ def _limpar_ato(valor: str) -> str:
 
 def ler(caminho) -> dict:
     """{'ato', 'processo', 'pars': [{'k': tipo, 'txt': texto, 'linha': n}]}.
-    Tipos: corpo, cit, decisorio, sublinhado, nota, relatorio, dispositivo, comando."""
+    Tipos: corpo, cit, item1, item2, decisorio, sublinhado, nota, relatorio, dispositivo, comando.
+    O item traz 'ordem' verdadeiro quando segue o dispositivo, um comando ou parágrafo sublinhado."""
     linhas = Path(caminho).read_text(encoding="utf-8-sig").splitlines()
     out = {"ato": None, "processo": None, "pars": []}
     apos_disp = False
+    ultimo = None  # tipo do último parágrafo que não é item de enumeração
     for i, bruta in enumerate(linhas, 1):
         ln = bruta.rstrip()
         if not ln.strip() or ln.lstrip().startswith("//"):
@@ -67,6 +75,11 @@ def ler(caminho) -> dict:
         if ln.startswith(">"):
             out["pars"].append({"k": "cit", "txt": ln[1:].strip(), "linha": i})
             continue
+        if ln.startswith("++ ") or ln.startswith("+ "):
+            nivel = "item2" if ln.startswith("++ ") else "item1"
+            out["pars"].append({"k": nivel, "txt": ln[3 if nivel == "item2" else 2:].strip(), "linha": i,
+                                "ordem": ultimo in ("dispositivo", "decisorio", "comando", "sublinhado")})
+            continue
         if ln.startswith("!! "):
             k, txt = "decisorio", ln[3:].strip()
         elif ln.startswith("__ "):
@@ -81,6 +94,7 @@ def ler(caminho) -> dict:
         elif apos_disp and k == "corpo" and COMANDO_RE.match(plano):
             k = "comando"
         out["pars"].append({"k": k, "txt": txt, "linha": i})
+        ultimo = k
     return out
 
 

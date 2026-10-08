@@ -34,7 +34,8 @@ VEDADOS = {
     r"(?i)\bhaja vista\b": "haja vista (usar porquanto)",
     r"(?i)brevemente relatado|passo a decidir": "fórmula de outra unidade (o relatório fecha em É o Relatório.)",
     r"(?i)publica[cç][oõ]es e intima[cç][oõ]es via DJEN": "linha do DJEN não se usa na 17ª Vara",
-    r"(?i)\bregistre-se\b|\bpublique-se\b": "publique-se/registre-se por extenso (o fecho da sentença é P. R. I.)",
+    r"(?i)\bpublique-se\s*[.,;]|\bregistre-se\s*[.,;]|publique-se,? registre-se":
+        "publique-se/registre-se por extenso (o fecho da sentença é P. R. I.)",
     r"(?i)\bà fls\.": "crase indevida em 'à fls.' (usar 'à fl.' ou 'às fls.')",
     r"(?i)conclus[ãa]o inexor[áa]vel que se chega": "regência: 'a que se chega'",
     r"(?i)\bpromoa[cç][aã]o\b": "erro de digitação: promoção",
@@ -45,7 +46,7 @@ METODO = (r"(?i)varredura|camada de texto|\bOCR\b|renderiz|p[aá]gina a p[aá]gi
 PRIMEIRA_PESSOA = (r"(?i)\b(afasto|rejeito|acolho|reconhe[cç]o|entendo|verifico|observo|vislumbro|indefiro|defiro|"
                    r"julgo|condeno|determino|decido|declaro|homologo|extingo|concedo|denego|mantenho|revogo|nomeio|"
                    r"passo a|passo ao)\b")
-GERUNDIO_EXC = r"^(quando|comando|comandos|mando|bando|brando|dividendo|dividendos|findo|lindo|Fernando|Orlando|Armando|Rolando|Rosendo|Raimundo|mundo|fundo|fundos|segundo|segunda|oriundo|oriunda|profundo|tremendo|estupendo|horrendo|reverendo|adendo|adendos|remendo|vendo|fazendo-se)$"
+GERUNDIO_EXC = r"^(quando|comando|comandos|mando|bando|brando|dividendo|dividendos|findo|lindo|Fernando|Orlando|Armando|Rolando|Rosendo|Raimundo|mundo|fundo|fundos|segundo|segunda|oriundo|oriunda|profundo|tremendo|estupendo|horrendo|reverendo|adendo|adendos|remendo|vendo|fazendo-se|exequendo|exequenda|exequendos|exequendas|educando|educandos|formando|formandos|graduando|graduandos|orientando|minuendo|subtraendo|memorando|memorandos|nefando|venerando)$"
 SIGLA_PALAVRA = ("DETRAN|SEFAZ|ANVISA|ANEEL|ANATEL|RENAVAM|SECOM|SENATRAN|PETROBRAS|EMBRAPA|UNESCO|DATAPREV|SEDUC|"
                  "SEPLAG|NATJUS|FUNAI|IBAMA|SERPRO|PROCON|FUNDEB|ENEM|FIES|SELIC|INCRA|DATASUS|SISBAJUD|RENAJUD|"
                  "INFOJUD|SERASAJUD|CONITEC|SESAU|SEMARH|SEINFRA|ALEPREV")
@@ -129,8 +130,9 @@ def verificar(caminho) -> dict:
                 and not re.search(r"(?i)remessa necess[aá]ria|reexame necess[aá]rio|art\. 496", corpo_todo):
             avis.append("procedência contra a Fazenda sem consignar a sujeição (ou não) à remessa necessária (art. 496 do CPC)")
     elif ato in ("decisão", "despacho"):
-        if ult != cfg["fecho_decisao"]:
-            pend.append(f"a {ato} termina em '{cfg['fecho_decisao']}' (achado: '{ult[:40]}')")
+        if not marcacao.FECHO_DECISAO_RE.match(ult):
+            pend.append(f"a {ato} termina em '{cfg['fecho_decisao']}' (ou 'Cumpra-se observada a sequência acima.') "
+                        f"(achado: '{ult[:40]}')")
         if ato == "decisão" and i_disp < 0:
             avis.append("decisão sem parágrafo iniciado por 'Diante do exposto' ou 'Do exposto'")
     if ato in ("sentença", "decisão") and i_rel >= 0:
@@ -204,8 +206,12 @@ def verificar(caminho) -> dict:
         if " — " in t or " – " in t:
             avis.append(f"travessão na {ref} (só quando essencial)")
         prox = texto_pars[i + 1]["k"] if i + 1 < len(texto_pars) else None
-        if ":" in re.sub(r"https?:", "", sem_aspas) and not (t.endswith(":") and prox == "cit"):
-            avis.append(f"dois-pontos no corpo na {ref} (só para introduzir transcrição em bloco)")
+        if ":" in re.sub(r"https?:", "", sem_aspas) and not (t.endswith(":") and prox in ("cit", "item1", "item2")):
+            avis.append(f"dois-pontos no corpo na {ref} (só para introduzir transcrição em bloco ou enumeração)")
+        if re.search(r"(?i)\b(?:no|do|o|ao) item \d+\b", t):
+            avis.append(f"remissão a 'item N' na {ref}: sem numeração, refira 'a determinação acima' ou descreva o ato")
+        if k in ("item1", "item2") and not re.match(r"^[ivxl]+\)|^[a-z]\)", t):
+            avis.append(f"item de enumeração na {ref} sem 'i)', 'ii)'… (nível 1) ou 'a)', 'b)'… (nível 2)")
         if w > cfg["max_palavras_paragrafo_bloqueante"]:
             pend.append(f"parágrafo de {w} palavras na {ref} (divida: uma questão por parágrafo)")
         elif w > cfg["max_palavras_paragrafo"]:
@@ -246,6 +252,21 @@ def verificar(caminho) -> dict:
                         avis.append(f"ideia repetida na {ref} (já dita na {ref_ant}): enxugue")
                         break
                 vistos.append((sh, ref))
+
+    # ---------------- cumprimento de sentença (módulo referencias/cumprimento_sentenca.md)
+    todo = " ".join(marcacao.sem_marcas(p["txt"]) for p in proprios)
+    cs = bool(re.search(r"(?i)cumprimento de senten[çc]a", todo)) or bool(re.search(r"-\d{2}$", m["processo"] or ""))
+    if cs:
+        if ato == "sentença" and re.search(r"(?i)condeno[^.]{0,80}\bcustas\b", todo):
+            avis.append("cumprimento de sentença: não há custas (redacao.md, item 5) — confira a condenação em custas")
+        if any(re.search(r"(?i)\b(remetam-se|remeta-se|encaminhem-se|encaminhe-se|vista)\b[^.]{0,40}\b(Contadoria|CJU)\b",
+                         marcacao.sem_marcas(x["txt"])) and not re.search(r"(?i)n[ãa]o [ée] cab[íi]vel", marcacao.sem_marcas(x["txt"]))
+               for x in proprios):
+            avis.append("cumprimento de sentença: remessa à Contadoria só se não houver meio eletrônico de cálculo "
+                        "(modelo CS; cumprimento_sentenca.md, item 4)")
+        if re.search(r"(?i)intime-se (o|a) (Estado|Alagoas Previd|executad|Fazenda)[^.]{0,120}fichas? financeiras?", todo):
+            avis.append("cumprimento de sentença: as fichas financeiras são ônus do exequente; requisição ao executado só "
+                        "com prova de recusa ou impossibilidade (art. 524, § 3º, do CPC; modelo CS)")
 
     # ---------------- extensão (contra a verborragia)
     limite = LIMITE_PALAVRAS.get(ato)

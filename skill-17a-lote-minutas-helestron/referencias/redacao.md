@@ -145,9 +145,12 @@ tempestividade de embargos de declaração.
   tribunais superiores — o magistrado indica o RMS 32.482/STF (publicado em 21/02/2020), que só se
   cita depois de conferido no ledger e só se aplica se a matéria estiver por ele abrangida. Havendo
   modelo próprio da unidade (v.g., liberação de mercadorias), use-o e adapte-o.
-- **Cumprimento de sentença**: o título governa; havendo cálculo a fazer, **decisão** que o explique
-  e intime as partes para manifestação no prazo comum de 5 (cinco) dias, para só então sentenciar;
-  autos de conhecimento e demais sequenciais obrigatórios; sem custas.
+- **Cumprimento de sentença**: siga o módulo `cumprimento_sentenca.md` (fase e ato, requisitos do art.
+  534 do CPC e da Resolução TJAL n.º 21/2023, sucessão, cálculos, impugnação, requisitórios, cessão e o
+  padrão dos despachos `despacho_CS_*`). O título governa; havendo cálculo a fazer, **decisão** que o
+  explique e intime as partes para manifestação no prazo comum de 5 (cinco) dias, para só então
+  homologar ou sentenciar; autos de conhecimento e demais sequenciais obrigatórios (`autos.py
+  relacionados N`); sem custas.
 - **Procedimento comum**: analise o interesse do Ministério Público pelos pareceres que ele já emitiu
   nos autos e insira, conforme o caso, a intimação ou a desnecessidade dela, com registro na anotada.
 - **Promoção de militares** (modelos 1 a 3): IRDR n.º 3/TJAL e a Lei Estadual n.º 6.514/2004 —

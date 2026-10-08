@@ -16,10 +16,13 @@ Uma linha por parágrafo (linha em branco não conta):
 | `> texto` | transcrição em bloco: Courier New 10, recuo 4 cm, simples |
 | `!! texto` | parágrafo decisório: negrito e sublinhado inteiros (conclusão de preliminar, prejudicial ou incidente; tese central do mérito) |
 | `__ texto` | parágrafo inteiro sublinhado (comando que não abre por verbo de comando) |
+| `+ texto` | item de enumeração recuado (Times 12, recuo esquerdo de 4 cm, 1,5), aberto por `i)`, `ii)`… — v.g., as exigências do despacho de adequação do cumprimento de sentença |
+| `++ texto` | subitem recuado (4,5 cm), aberto por `a)`, `b)`… |
 | `%% texto` | nota só da anotada, em vermelho |
 | `// texto` | comentário, ignorado |
 
-Automático: "É o Relatório." em negrito; o parágrafo que abre por "Diante do exposto" ou "Do exposto"
+Itens e subitens que seguem o dispositivo ou um comando saem sublinhados, como nos modelos; o
+parágrafo que os introduz termina em dois-pontos. Automático: "É o Relatório." em negrito; o parágrafo que abre por "Diante do exposto" ou "Do exposto"
 em negrito e sublinhado (não marque `**` nele); depois do dispositivo, o parágrafo que abre por
 verbo de comando ("Intime-se", "Expeça-se", "Retire-se", "Suspenda-se", "Designe-se", "Após,",
 "Em seguida,", "Decorrido", "Serve a presente", "À SPU,"…) sublinhado — no despacho, desde o
@@ -72,7 +75,8 @@ JSON com `OK` ou `BLOQUEADO`, `pendencias_bloqueantes` e `apontamentos`.
   na sentença e na decisão com relatório, a falta de "Trata-se de" com partes em negrito; na
   sentença, a falta de "É o Relatório.", de "Diante do exposto, julgo" (ou homologo, concedo,
   denego, declaro, extingo, reconheço, acolho, rejeito), do parágrafo de arquivamento ou de
-  "P. R. I." no fim; na decisão e no despacho, a falta de "Cumpra-se." no fim.
+  "P. R. I." no fim; na decisão e no despacho, a falta de "Cumpra-se." (ou "Cumpra-se observada a
+  sequência acima.") no fim.
 - **Apontamentos** (reexamine um a um; o que ficar, justifique com `autos.py marcar … --justificativa`):
   gerúndio, travessão, dois-pontos fora da introdução de transcrição, parágrafo acima de 110
   palavras, palavra repetida quatro vezes, frase curta e solta, abertura que nega o direito em frase

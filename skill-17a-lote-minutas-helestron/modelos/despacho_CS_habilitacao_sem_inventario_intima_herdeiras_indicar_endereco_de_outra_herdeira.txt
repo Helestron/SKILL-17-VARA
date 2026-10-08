@@ -1,0 +1,21 @@
+// modelo importado de: Despacho - CS - Habilitação sem inventário - intima herdeiras para qualificar outra herdeira - responsabilidade de indicar o endereço.rtf
+@ato despacho
+@processo 0724179-30.2017.8.02.0001-01
+// cabeçalho: PROCESSO N° 0724179-30.2017.8.02.0001/01
+// cabeçalho: CUMPRIMENTO DE SENTENÇA
+// cabeçalho: HERDEIRO E AUTOR:  ANDRESSA GOMES CALHEIRO E OUTROS
+// cabeçalho: RÉU:  ESTADO DE ALAGOAS
+// cabeçalho: D E S P A C H O
+Trata-se de Cumprimento de Sentença proposto em face do **Estado de Alagoas**, todos qualificados.
+As filhas do autor, beneficiário do título executivo judicial, ingressaram com pedido de habilitação.
+Devidamente intimadas para informar acerca da existência de inventário, as requerentes aduziram a inexistência de inventário aberto, bem como noticiaram a existência de outra herdeira concorrente, a qual não integra os presentes autos (fls. 62).
+É o Relatório.
+O crédito objeto desta execução integra o patrimônio do espólio do falecido Anderson Ferreira Calheiros, sendo certo que, nos termos do art. 1.829, inciso I, do Código Civil, os descendentes concorrem com o cônjuge sobrevivente à herança, a depender do regime de bens adotado no casamento. Assim, o crédito exequendo não pertence exclusivamente às filhas requerentes, mas à universalidade do espólio, do qual a viúva também é herdeira.
+Desse modo, a habilitação parcial, restrita às filhas, sem a participação da cônjuge sobrevivente, implicaria risco de pagamento ineficaz em relação à viúva, além de potencial violação ao seu direito sucessório, razão pela qual não pode ser deferida nos moldes em que requerida.
+Diante do exposto, determino a intimação das requerentes para que, no prazo de 15 (quinze) dias, sob pena de extinção do feito sem resolução do mérito, indiquem o endereço atualizado da viúva Luciane Maria da Silva, para fins de sua intimação nestes autos. A alegação genérica de desconhecimento do paradeiro não é suficiente para desobrigar as requerentes desse ônus, tendo em vista que incumbe à parte diligenciar para a localização dos demais interessados. Ademais, as requerentes, na qualidade de familiares do *de cujus*, têm melhores condições de localizar a cônjuge sobrevivente do que o Juízo.
+__ **Com a indicação do endereço, proceda-se à intimação de Luciane Maria da Silva para que, no prazo de 15 (quinze) dias, tome ciência do presente feito e se manifeste sobre a habilitação em curso, podendo, inclusive, requerer sua própria habilitação como herdeira.** Ressalte-se que, na qualidade de cônjuge sobrevivente e herdeira concorrente, a viúva possui interesse jurídico direto no crédito exequendo, razão pela qual sua intimação é indispensável para o regular prosseguimento do feito.
+__ Após a manifestação da viúva, abra-se vista ao Estado de Alagoas para que se manifeste no prazo de 15 (quinze) dias.
+__ Por derradeiro, conclusos na fila **"após Sentença"**.
+// rodapé: Maceió, datado eletronicamente.
+// rodapé: ALBERTO JORGE CORREIA DE BARROS LIMA
+// rodapé: JUIZ DE DIREITO

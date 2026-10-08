@@ -72,6 +72,7 @@ def _fmt():
         "cfonte": f["citacao_fonte"], "csz": int(f["citacao_pt"] * 2),
         "crecuo": int(f["citacao_recuo_esquerdo_cm"] * TW), "clinha": int(240 * f["citacao_entrelinhas"]),
         "cesp": int(f["citacao_espaco_pt"] * 20),
+        "irecuo": int(f.get("item_recuo_cm", 4.0) * TW), "i2recuo": int(f.get("subitem_recuo_cm", 4.5) * TW),
         "margens": [int(f[k] * TW) for k in ("margem_superior_cm", "margem_direita_cm", "margem_inferior_cm",
                                             "margem_esquerda_cm")],
     }
@@ -81,6 +82,10 @@ def _ppr(k, F):
     if k == "cit":
         return (f'<w:pPr><w:spacing w:before="{F["cesp"]}" w:after="{F["cesp"]}" w:line="{F["clinha"]}" '
                 f'w:lineRule="auto"/><w:ind w:left="{F["crecuo"]}"/><w:jc w:val="both"/></w:pPr>')
+    if k in ("item1", "item2"):
+        recuo = F["irecuo"] if k == "item1" else F["i2recuo"]
+        return (f'<w:pPr><w:spacing w:before="{F["antes"]}" w:after="{F["depois"]}" w:line="{F["linha"]}" '
+                f'w:lineRule="auto"/><w:ind w:left="{recuo}"/><w:jc w:val="both"/></w:pPr>')
     if k in ("nota", "cabecalho"):
         return '<w:pPr><w:spacing w:before="60" w:after="60"/><w:jc w:val="both"/></w:pPr>'
     return (f'<w:pPr><w:spacing w:before="{F["antes"]}" w:after="{F["depois"]}" w:line="{F["linha"]}" '
@@ -116,7 +121,7 @@ def _paragrafo(p, anotada, F):
             trechos[-1]["t"] = trechos[-1]["t"].rstrip()
     fonte, sz = (F["cfonte"], F["csz"]) if k == "cit" else (F["fonte"], F["sz"])
     todo_b = k in ("decisorio", "dispositivo", "relatorio")
-    todo_u = k in ("decisorio", "dispositivo", "sublinhado", "comando")
+    todo_u = k in ("decisorio", "dispositivo", "sublinhado", "comando") or (k in ("item1", "item2") and p.get("ordem"))
     todo_red = k in ("nota", "cabecalho")
     corpo = []
     for r in trechos:

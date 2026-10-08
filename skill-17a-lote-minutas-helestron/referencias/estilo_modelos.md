@@ -17,6 +17,13 @@ precedente que o modelo traga sem conferência (Fase 2 do SKILL.md).
 | `sentenca_promocao_militar_ativo_sem_saltos_improcedencia.txt` | sentença | promoção, ativo, sem saltos, exclusão de ofício da Alagoas Previdência, curso feito *a posteriori*, fato superveniente | improcedência |
 | `sentenca_promocao_militar_inativo_correcao_anteriores_coisa_julgada_improcedencia.txt` | sentença | promoção, inativo, correção de promoções anteriores, prescrição por ato comissivo e omissivo | improcedência |
 | `decisao_MS_tributario_liberacao_mercadorias_ICMS_liminar_defere_em_parte.txt` | decisão | MS tributário, apreensão de mercadorias como coerção (Súmula 323/STF), pedido preventivo genérico | liminar deferida em parte |
+| `despacho_CS_adequar_requerimento_art534_Res21-2023_espolio_sem_inventariante.txt` | despacho | cumprimento de sentença: requerimento a adequar ao art. 534 do CPC e à Resolução TJAL n.º 21/2023 (planilha, descontos, contas, contrato de honorários), espólio sem inventariante, CJU incabível, encadeamento até a conclusão | adequação, sob pena de extinção |
+| `despacho_CS_habilitacao_sem_inventario_intima_herdeiras_indicar_endereco_de_outra_herdeira.txt` | despacho | cumprimento de sentença: habilitação sem inventário; cônjuge sobrevivente fora dos autos (art. 1.829, I, do CC); ônus de indicar o endereço | habilitação parcial não deferida; intimação |
+| `despacho_CS_fichas_financeiras_onus_da_exequente.txt` | despacho | cumprimento de sentença: fichas financeiras são ônus do exequente, não do executado | intimação da exequente |
+| `despacho_CS_cessao_de_credito_de_precatorio_Presidencia_TJ_reitera_Secretaria_nao_volta_concluso.txt` | despacho | cumprimento de sentença: cessão de crédito de precatório já expedido (Presidência do TJAL); petição repetitiva | reitera; Secretaria não torna conclusos |
+
+Para os cumprimentos de sentença, leia também `cumprimento_sentenca.md` (fases, requisitos, sucessão,
+cálculos, impugnação, requisitórios, cessão e o padrão de redação dos despachos, item 9).
 
 Novos modelos entram por `importar_modelo.py <arquivo> --saida modelos/<nome>.txt` (proposta ao
 usuário no fim do lote, seção "Autodesenvolvimento" do SKILL.md). Pastas de modelos do próprio
@@ -58,8 +65,15 @@ decisão como mandado."; comandos (notificação da autoridade para informaçõe
 órgão de representação judicial, vista ao Ministério Público, conclusão para sentença);
 "Cumpra-se."
 
-**Despacho**: sem relatório; os comandos encadeados até o próximo ato útil, com o gatilho final
-("decorridos os prazos, voltem conclusos para sentença"); "Cumpra-se."
+**Despacho**: sem relatório no mero impulso; os comandos encadeados até o próximo ato útil, com o
+gatilho final ("decorridos os prazos, voltem conclusos para sentença"); "Cumpra-se.". **Despacho de
+cumprimento de sentença** (modelos `despacho_CS_*`): "Trata-se de Cumprimento de Sentença proposto …
+em face do **Estado de Alagoas**, todos qualificados."; relatório de duas ou três frases e "É o
+Relatório." quando há questão a decidir; fundamentação de um a três parágrafos, com a norma e quem
+tem o ônus; "Diante do exposto, determino a intimação … para, no prazo de 15 (quinze) dias, sob pena
+de extinção do processo sem resolução do mérito, …", com a enumeração recuada do que falta (i), ii)…;
+a), b)…); o encadeamento dos atos seguintes até "conclusos na fila "após Sentença""; "Cumpra-se." ou
+"Cumpra-se observada a sequência acima." (`cumprimento_sentenca.md`, item 9).
 
 ## 3. Relatório — enxuto, um evento por frase
 
