@@ -32,13 +32,21 @@ DISPOSITIVO_RE = re.compile(r"^(Diante do exposto|Do exposto|Pelo exposto|Por to
 COMANDO_RE = re.compile(r"^(À SPU|À Secretaria|Ao Cartório|Intime(?:m)?-se|Cite(?:m)?-se|Notifique(?:m)?-se|"
                         r"Expeça(?:m)?-se|Oficie(?:m)?-se|Retire-se|Retire|Cadastre-se|Cadastre|Retifique-se|"
                         r"Proceda-se|Dê-se|Remetam-se|Remeta-se|Encaminhem-se|Encaminhe-se|Junte-se|Aguarde-se|"
-                        r"Após|Em seguida|Serve a presente|Certifique-se|Anote-se|Anotem-se|Inclua-se|Exclua-se|"
+                        r"Serve a presente|Certifique-se|Anote-se|Anotem-se|Inclua-se|Exclua-se|"
                         r"Libere-se|Desbloqueie-se|Requisite-se|Comunique-se|Providencie|Promova|Abra-se|Tornem|"
                         r"Voltem|Façam-se|Faça-se|Ciência|Suspenda-se|Suspendam-se|Sobreste-se|Sobrestem-se|"
-                        r"Arquive-se|Arquivem-se|Designe-se|Decorrido|Decorridos|Retornem|Retorne|Aguardem|"
-                        r"Cumpra(?:m)?-se o|Publique-se o edital|Citem-se|Por derradeiro|Exaurido|Exauridos|"
-                        r"Com a indicação|Com a manifestação|Com o cumprimento|Com a juntada|Com a resposta|"
-                        r"Mantenha-se|Mantenham-se|Determino, ainda|Não havendo|Havendo|Ultimad[oa]s?)\b")
+                        r"Arquive-se|Arquivem-se|Designe-se|Retornem|Retorne|Aguardem|"
+                        r"Cumpra(?:m)?-se o|Publique-se o edital|Citem-se|Mantenha-se|Mantenham-se|"
+                        r"Determino, ainda)\b")
+# aberturas condicionais: só são comando se o mesmo parágrafo trouxer verbo de comando (evita sublinhar
+# fundamentação que comece por "Havendo…" ou "Com a juntada…")
+COMANDO_CONDICIONAL_RE = re.compile(r"^(Por derradeiro|Exaurido|Exauridos|Decorrido|Decorridos|Com a indicação|"
+                                    r"Com a manifestação|Com o cumprimento|Com a juntada|Com a resposta|Não havendo|"
+                                    r"Havendo|Ultimad[oa]s?|Após|Em seguida)\b")
+VERBO_COMANDO_RE = re.compile(r"(?i)\b(intime(?:m)?-se|cite(?:m)?-se|notifique(?:m)?-se|expeça(?:m)?-se|oficie(?:m)?-se|"
+                              r"proceda-se|abra-se|dê-se|remetam-se|remeta-se|encaminhem-se|tornem|voltem|conclusos|"
+                              r"arquivem-se|arquive-se|aguarde-se|cumpra-se|certifique-se|junte-se|retornem|"
+                              r"intimação d[oa]s?|vista)\b")
 FECHO_DECISAO_RE = re.compile(r"^Cumpra-se(,? observada a sequência acima)?\.$")
 RELATORIO_RE = re.compile(r"^É o [Rr]elatório\.$")
 TIPOS_ATO = {"sentenca": "sentença", "sentença": "sentença", "decisao": "decisão", "decisão": "decisão",
@@ -58,6 +66,7 @@ def ler(caminho) -> dict:
     out = {"ato": None, "processo": None, "pars": []}
     apos_disp = False
     ultimo = None  # tipo do último parágrafo que não é item de enumeração
+    fim_sublinhado = False
     for i, bruta in enumerate(linhas, 1):
         ln = bruta.rstrip()
         if not ln.strip() or ln.lstrip().startswith("//"):
@@ -78,7 +87,7 @@ def ler(caminho) -> dict:
         if ln.startswith("++ ") or ln.startswith("+ "):
             nivel = "item2" if ln.startswith("++ ") else "item1"
             out["pars"].append({"k": nivel, "txt": ln[3 if nivel == "item2" else 2:].strip(), "linha": i,
-                                "ordem": ultimo in ("dispositivo", "decisorio", "comando", "sublinhado")})
+                                "ordem": ultimo in ("dispositivo", "decisorio", "comando", "sublinhado") or fim_sublinhado})
             continue
         if ln.startswith("!! "):
             k, txt = "decisorio", ln[3:].strip()
@@ -91,10 +100,13 @@ def ler(caminho) -> dict:
             k = "relatorio"
         elif DISPOSITIVO_RE.match(plano):
             k, apos_disp = "dispositivo", True
-        elif apos_disp and k == "corpo" and COMANDO_RE.match(plano):
+        elif apos_disp and k == "corpo" and (COMANDO_RE.match(plano) or
+                                             (COMANDO_CONDICIONAL_RE.match(plano) and VERBO_COMANDO_RE.search(plano))):
             k = "comando"
         out["pars"].append({"k": k, "txt": txt, "linha": i})
         ultimo = k
+        visiveis = [r for r in runs(txt) if r["t"].strip() and not r["red"]]
+        fim_sublinhado = bool(visiveis) and visiveis[-1]["u"]  # a ordem que termina sublinhada continua nos itens
     return out
 
 

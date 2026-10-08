@@ -24,9 +24,11 @@ Uma linha por parágrafo (linha em branco não conta):
 Itens e subitens que seguem o dispositivo ou um comando saem sublinhados, como nos modelos; o
 parágrafo que os introduz termina em dois-pontos. Automático: "É o Relatório." em negrito; o parágrafo que abre por "Diante do exposto" ou "Do exposto"
 em negrito e sublinhado (não marque `**` nele); depois do dispositivo, o parágrafo que abre por
-verbo de comando ("Intime-se", "Expeça-se", "Retire-se", "Suspenda-se", "Designe-se", "Após,",
-"Em seguida,", "Decorrido", "Serve a presente", "À SPU,"…) sublinhado — no despacho, desde o
-primeiro parágrafo; itálico nos termos de `scripts/termos_italico.txt` (amplie a
+verbo de comando ("Intime-se", "Expeça-se", "Retire-se", "Suspenda-se", "Designe-se", "Serve a
+presente", "À SPU,"…) sublinhado — no despacho, desde o primeiro parágrafo; as aberturas condicionais
+("Após,", "Em seguida,", "Decorrido", "Exaurido", "Havendo", "Não havendo", "Com a manifestação",
+"Com a indicação", "Por derradeiro"…) só contam como comando quando o parágrafo traz verbo de comando
+("intime-se", "conclusos", "abra-se vista"…) — o argumento que começa por "Havendo…" não se sublinha; itálico nos termos de `scripts/termos_italico.txt` (amplie a
 lista quando preciso).
 
 Em linha: `**negrito**`, `__sublinhado__`, `*itálico*`, `{{apontamento vermelho}}` (só na anotada),

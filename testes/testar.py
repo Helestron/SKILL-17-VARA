@@ -255,6 +255,65 @@ def main():
                "contrato de honorários (destaque): fl. 3" in r.stdout, "checklist de requisitos do cumprimento")
         r = rodar(S / "autos.py", "inventario", tmp / "acervo", "--lista", "0750345-89.2023/02", "-t", tmp / "trab_cs2")
         checar("não encontrados" in r.stdout, "incidente ausente relatado")
+
+        # 8. regressões da revisão das adições de cumprimento (versão 2.1)
+        import re as _re
+        desp2 = ("@ato despacho\n@processo 0714346-41.2024.8.02.0001-01\n"
+                 "Havendo nos autos prova do óbito, a habilitação depende da participação de todos os herdeiros.\n"
+                 "Havendo impugnação, intime-se a parte exequente para manifestação em 15 (quinze) dias.\nCumpra-se.\n")
+        r = rodar(S / "gerar_minuta.py", minuta(tmp, "desp2.txt", desp2), "--saida", saida)
+        x2 = zipfile.ZipFile(json.loads(r.stdout)["limpa"]).read("word/document.xml").decode()
+        ps2 = _re.findall(r"<w:p>.*?</w:p>", x2, _re.S)
+        checar('<w:u ' not in ps2[0] and '<w:u ' in ps2[1], "abertura condicional só é comando com verbo de comando")
+        mod = SK / "modelos" / "despacho_CS_adequar_requerimento_art534_Res21-2023_espolio_sem_inventariante.txt"
+        r = rodar(S / "gerar_minuta.py", mod, "--saida", saida, "--nome", "modelo_adequar", "--rascunho", esperado=None)
+        xm = zipfile.ZipFile(saida / "modelo_adequar_anotada.docx").read("word/document.xml").decode()
+        itens_m = [p for p in _re.findall(r"<w:p>.*?</w:p>", xm, _re.S) if 'w:ind w:left="2268"/>' in p or 'w:ind w:left="2551"/>' in p]
+        checar(len(itens_m) == 10 and all('<w:u ' in p for p in itens_m), "itens do modelo de adequação sublinhados como no original")
+        for nome, txt, esperado in (
+                ("registre_oportuno", subst(base, "Com efeito, o autor", "Registre-se, por oportuno, que o autor"), "OK"),
+                ("pub_int", subst(base, "P. R. I.", "Publique-se e intimem-se."), "BLOQUEADO")):
+            r = rodar(S / "verificar_minuta.py", minuta(tmp, nome + ".txt", txt), esperado=None)
+            checar(json.loads(r.stdout)["resultado"] == esperado, f"fórmula de publicação: {nome}")
+        conh = subst(base, "Réplica às fls. 70/75.", "Réplica às fls. 70/75, com valores a apurar em cumprimento de sentença.")
+        r = rodar(S / "verificar_minuta.py", minuta(tmp, "conh.txt", conh))
+        checar("cumprimento de sentença: não há custas" not in r.stdout, "sentença de conhecimento não é tratada como cumprimento")
+        r = rodar(S / "verificar_minuta.py", minuta(tmp, "edital.txt", subst(base_cs, "tornem os autos imediatamente conclusos.",
+                                                                             "tornem os autos imediatamente conclusos, observado o item 10 do edital.")))
+        checar("remissão a 'item N'" not in r.stdout, "item de edital não é remissão interna")
+        r = rodar(S / "verificar_minuta.py", minuta(tmp, "remessa.txt", subst(base_cs, "Cumpra-se observada a sequência acima.",
+                                                                              "Determino a remessa dos autos à Contadoria Judicial.\nCumpra-se.")))
+        checar("Contadoria só se não houver meio eletrônico" in r.stdout, "'determino a remessa … à Contadoria' apontada")
+        r = rodar(S / "verificar_minuta.py", minuta(tmp, "oficio.txt", subst(base_cs, "Cumpra-se observada a sequência acima.",
+                                                                             "Oficie-se à Secretaria de Estado da Fazenda para enviar as fichas financeiras do exequente.\nCumpra-se.")))
+        checar("ônus do exequente" in r.stdout, "ofício ao órgão pagador pedindo fichas financeiras apontado")
+        # importador: fecho exato, transcrição recuada em Times, numeração dentro do negrito, cabeçalho após o título
+        import docx as _docx
+        from docx.shared import Cm
+        d = _docx.Document()
+        for linha in ("D E S P A C H O", "AUTOR: FULANO DE TAL"):
+            d.add_paragraph(linha)
+        d.add_paragraph("Trata-se de Cumprimento de Sentença proposto por Fulano em face do Estado de Alagoas.")
+        d.add_paragraph("Cumpra-se a decisão de fls. 80.")
+        pr = d.add_paragraph("O art. 534 do CPC dispõe que o exequente apresentará demonstrativo discriminado e atualizado do crédito.")
+        pr.paragraph_format.left_indent = Cm(4)
+        p7 = d.add_paragraph(); rr = p7.add_run("7. Não havendo impugnação"); rr.bold = True; p7.add_run(" ou havendo concordância, conclusos.")
+        d.add_paragraph("Cumpra-se.")
+        d.add_paragraph("Maceió, datado eletronicamente.")
+        d.save(str(tmp / "imp.docx"))
+        r = rodar(S / "importar_modelo.py", tmp / "imp.docx")
+        checar("// cabeçalho: AUTOR: FULANO DE TAL" in r.stdout, "linha de cabeçalho após o título fica como comentário")
+        checar("\nCumpra-se a decisão de fls. 80.\n" in r.stdout, "'Cumpra-se a decisão…' não encerra o corpo")
+        checar("\n> O art. 534 do CPC" in r.stdout, "transcrição recuada em Times continua transcrição")
+        checar("\n**Não havendo impugnação** ou havendo" in r.stdout, "numeração dentro do negrito sem desbalancear")
+        # pasta por processo: o principal não herda a capa do incidente
+        pp = tmp / "porprocesso" / n["n1"]
+        (pp / "_controle").mkdir(parents=True)
+        shutil.copy(next((tmp / "acervo").glob(f"{n['n1']}.pdf")), pp / "autos.pdf")
+        (pp / "_controle" / f"{n['n1']}-01_capa.json").write_text(json.dumps({"capa": {"classe": "Cumprimento de Sentença"}}), encoding="utf-8")
+        (pp / "_controle" / f"{n['n1']}_capa.json").write_text(json.dumps({"capa": {"classe": "Procedimento Comum Cível"}}), encoding="utf-8")
+        r = rodar(S / "autos.py", "inventario", tmp / "porprocesso", "-t", tmp / "trab_pp")
+        checar("Procedimento Comum Cível" in r.stdout, "pasta por processo: o principal lê a própria capa")
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     if falhas:

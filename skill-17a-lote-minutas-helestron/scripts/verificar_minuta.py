@@ -34,8 +34,6 @@ VEDADOS = {
     r"(?i)\bhaja vista\b": "haja vista (usar porquanto)",
     r"(?i)brevemente relatado|passo a decidir": "fórmula de outra unidade (o relatório fecha em É o Relatório.)",
     r"(?i)publica[cç][oõ]es e intima[cç][oõ]es via DJEN": "linha do DJEN não se usa na 17ª Vara",
-    r"(?i)\bpublique-se\s*[.,;]|\bregistre-se\s*[.,;]|publique-se,? registre-se":
-        "publique-se/registre-se por extenso (o fecho da sentença é P. R. I.)",
     r"(?i)\bà fls\.": "crase indevida em 'à fls.' (usar 'à fl.' ou 'às fls.')",
     r"(?i)conclus[ãa]o inexor[áa]vel que se chega": "regência: 'a que se chega'",
     r"(?i)\bpromoa[cç][aã]o\b": "erro de digitação: promoção",
@@ -46,7 +44,7 @@ METODO = (r"(?i)varredura|camada de texto|\bOCR\b|renderiz|p[aá]gina a p[aá]gi
 PRIMEIRA_PESSOA = (r"(?i)\b(afasto|rejeito|acolho|reconhe[cç]o|entendo|verifico|observo|vislumbro|indefiro|defiro|"
                    r"julgo|condeno|determino|decido|declaro|homologo|extingo|concedo|denego|mantenho|revogo|nomeio|"
                    r"passo a|passo ao)\b")
-GERUNDIO_EXC = r"^(quando|comando|comandos|mando|bando|brando|dividendo|dividendos|findo|lindo|Fernando|Orlando|Armando|Rolando|Rosendo|Raimundo|mundo|fundo|fundos|segundo|segunda|oriundo|oriunda|profundo|tremendo|estupendo|horrendo|reverendo|adendo|adendos|remendo|vendo|fazendo-se|exequendo|exequenda|exequendos|exequendas|educando|educandos|formando|formandos|graduando|graduandos|orientando|minuendo|subtraendo|memorando|memorandos|nefando|venerando)$"
+GERUNDIO_EXC = r"^(quando|comando|comandos|mando|bando|brando|dividendo|dividendos|findo|lindo|Fernando|Orlando|Armando|Rolando|Rosendo|Raimundo|mundo|fundo|fundos|segundo|segunda|oriundo|oriunda|profundo|tremendo|estupendo|horrendo|reverendo|adendo|adendos|remendo|vendo|fazendo-se|exequendo|exequenda|exequendos|exequendas|educandos|formandos|graduandos|orientandos|minuendo|subtraendo|memorando|memorandos|nefando|venerando)$"
 SIGLA_PALAVRA = ("DETRAN|SEFAZ|ANVISA|ANEEL|ANATEL|RENAVAM|SECOM|SENATRAN|PETROBRAS|EMBRAPA|UNESCO|DATAPREV|SEDUC|"
                  "SEPLAG|NATJUS|FUNAI|IBAMA|SERPRO|PROCON|FUNDEB|ENEM|FIES|SELIC|INCRA|DATASUS|SISBAJUD|RENAJUD|"
                  "INFOJUD|SERASAJUD|CONITEC|SESAU|SEMARH|SEINFRA|ALEPREV")
@@ -176,6 +174,10 @@ def verificar(caminho) -> dict:
         for rx, msg in VEDADOS.items():
             if re.search(rx, sem_aspas):
                 pend.append(f"{msg} — {ref}")
+        if re.fullmatch(r"(?i)(?:(?:publique-se|registre-se|intime(?:m)?-se)(?:\s+e)?[,.;]?\s*)+", t.strip()) and \
+                re.search(r"(?i)publique-se|registre-se", t):
+            pend.append(f"fórmula 'Publique-se. Registre-se. Intimem-se.' na {ref} (o fecho da sentença é P. R. I.; "
+                        f"o da decisão e do despacho, Cumpra-se.)")
         if re.search(METODO, sem_aspas):
             pend.append(f"linguagem de método na {ref} (afirme o resultado, com as fls.)")
         if reg != "dispositivo" and k not in ("decisorio", "comando", "sublinhado"):
@@ -208,7 +210,8 @@ def verificar(caminho) -> dict:
         prox = texto_pars[i + 1]["k"] if i + 1 < len(texto_pars) else None
         if ":" in re.sub(r"https?:", "", sem_aspas) and not (t.endswith(":") and prox in ("cit", "item1", "item2")):
             avis.append(f"dois-pontos no corpo na {ref} (só para introduzir transcrição em bloco ou enumeração)")
-        if re.search(r"(?i)\b(?:no|do|o|ao) item \d+\b", t):
+        if re.search(r"(?i)\b(?:no|do|o|ao) item \d+\b(?!\.\d|\s+d[oa]s?\s+(?:edital|anexo|contrato|t[íi]tulo|tese|"
+                     r"tabela|termo|acordo|ac[óo]rd[ãa]o|senten[çc]a|peti[çc][ãa]o|resolu[çc][ãa]o|portaria|lei))", t):
             avis.append(f"remissão a 'item N' na {ref}: sem numeração, refira 'a determinação acima' ou descreva o ato")
         if k in ("item1", "item2") and not re.match(r"^[ivxl]+\)|^[a-z]\)", t):
             avis.append(f"item de enumeração na {ref} sem 'i)', 'ii)'… (nível 1) ou 'a)', 'b)'… (nível 2)")
@@ -255,16 +258,20 @@ def verificar(caminho) -> dict:
 
     # ---------------- cumprimento de sentença (módulo referencias/cumprimento_sentenca.md)
     todo = " ".join(marcacao.sem_marcas(p["txt"]) for p in proprios)
-    cs = bool(re.search(r"(?i)cumprimento de senten[çc]a", todo)) or bool(re.search(r"-\d{2}$", m["processo"] or ""))
+    p1_txt = marcacao.sem_marcas(primeiro["txt"])
+    cs = bool(re.search(r"(?i)cumprimento de senten[çc]a", p1_txt)) or \
+        (bool(re.search(r"-\d{2}$", m["processo"] or "")) and bool(re.search(r"(?i)cumprimento de senten[çc]a", todo)))
     if cs:
         if ato == "sentença" and re.search(r"(?i)condeno[^.]{0,80}\bcustas\b", todo):
             avis.append("cumprimento de sentença: não há custas (redacao.md, item 5) — confira a condenação em custas")
-        if any(re.search(r"(?i)\b(remetam-se|remeta-se|encaminhem-se|encaminhe-se|vista)\b[^.]{0,40}\b(Contadoria|CJU)\b",
+        if any(re.search(r"(?i)\b(remetam-se|remeta-se|encaminhem-se|encaminhe-se|vista|remessa|encaminhamento)\b[^.]{0,40}"
+                         r"\b(Contadoria|CJU)\b",
                          marcacao.sem_marcas(x["txt"])) and not re.search(r"(?i)n[ãa]o [ée] cab[íi]vel", marcacao.sem_marcas(x["txt"]))
                for x in proprios):
             avis.append("cumprimento de sentença: remessa à Contadoria só se não houver meio eletrônico de cálculo "
                         "(modelo CS; cumprimento_sentenca.md, item 4)")
-        if re.search(r"(?i)intime-se (o|a) (Estado|Alagoas Previd|executad|Fazenda)[^.]{0,120}fichas? financeiras?", todo):
+        if re.search(r"(?i)(intime-se|intimação d[oa]|oficie-se|of[íi]cio)\s+(?:(?:o|a|ao|à)\s+)?(Estado|Alagoas Previd|executad|"
+                     r"Fazenda|Secretaria d[ea]|[óo]rg[ãa]o pagador)[^.]{0,160}fichas? financeiras?", todo):
             avis.append("cumprimento de sentença: as fichas financeiras são ônus do exequente; requisição ao executado só "
                         "com prova de recusa ou impossibilidade (art. 524, § 3º, do CPC; modelo CS)")
 

@@ -42,9 +42,9 @@ fila "após Sentença"") [modelo].
 Confira um a um, com as fls., e peça no despacho de adequação **apenas o que faltar** — não se
 determina juntar o que já está nos autos (CGJ/AL, `cgj_normas.md`):
 
-1. **Demonstrativo discriminado e atualizado** do crédito (art. 534, *caput*): nome e CPF do
-   exequente; índice de correção monetária; juros e taxa; termos inicial e final de juros e correção;
-   periodicidade da capitalização, se houver; descontos obrigatórios (incisos I a VI) — "observado o
+1. **Demonstrativo discriminado e atualizado** do crédito (art. 534, *caput* e incisos I a VI): nome
+   e CPF do exequente; índice de correção monetária; juros e taxa; termos inicial e final de juros e
+   correção; periodicidade da capitalização, se houver; descontos obrigatórios — "observado o
    título executivo judicial", preferencialmente pelo programa de cálculos judiciais ProjefWeb
    [modelo]. Pluralidade de exequentes: demonstrativo próprio de cada um (art. 534, § 1º).
 2. **Mais de um devedor**: a responsabilidade de cada um, com percentual e valor, conforme o título
@@ -71,9 +71,11 @@ determina juntar o que já está nos autos (CGJ/AL, `cgj_normas.md`):
   prazo [conferir a aplicação ao rito do art. 534].
 - **Contadoria Judicial Unificada (CJU)**: não é cabível o encaminhamento quando há meio eletrônico
   apto ao cálculo (periodicidade, principal, juros e multa estão ao alcance de quem assiste o
-  exequente) [modelo]. Se a parte invocar a gratuidade (art. 98, § 1º, VII, do CPC, que abrange a
-  memória de cálculo exigida para a execução [conferir]), enfrente o argumento: o meio eletrônico é
-  gratuito, e a gratuidade não transfere ao juízo a elaboração da conta que a parte pode fazer.
+  exequente) [modelo]. Se a parte invocar a gratuidade, enfrente o argumento com cuidado: o art. 98,
+  § 1º, VII, do CPC inclui expressamente na gratuidade o custo da memória de cálculo exigida para a
+  execução, de modo que a resposta depende do caso — meio eletrônico gratuito ao alcance da parte e
+  orientação do STJ e do TJAL sobre a remessa à Contadoria do beneficiário da gratuidade [conferir] —,
+  e a divergência com o modelo, se houver, vai em vermelho na anotada.
 - **Refaça toda conta** no ledger (`pesquisa_fontes.md`, item 6): índices e juros de cada período
   conforme o título e o módulo de Fazenda Pública (Temas 810/STF e 905/STJ; EC n.º 113/2021; EC n.º
   136/2025); a multa do art. 523 excluída; descontos obrigatórios; honorários da fase (item 7).
@@ -82,9 +84,11 @@ determina juntar o que já está nos autos (CGJ/AL, `cgj_normas.md`):
 
 ## 5. Sucessão do exequente falecido
 
-- **Espólio** só se representa pelo **inventariante** (art. 75, VII, do CPC). Peticionar em nome do
-  "Espólio de Fulano", qualificando-se como herdeiros, sem inventário nem inventariante, é
-  irregularidade de representação, que se manda sanar (art. 76 do CPC) [modelo].
+- **Espólio** representa-se pelo **inventariante** (art. 75, VII, do CPC) e, antes da nomeação dele,
+  pelo **administrador provisório** (arts. 613 e 614 do CPC; art. 1.797 do Código Civil) [conferir].
+  Peticionar em nome do "Espólio de Fulano", qualificando-se como herdeiros, sem inventário,
+  inventariante nem administrador provisório demonstrado, é irregularidade de representação, que se
+  manda sanar (art. 76 do CPC) [modelo].
 - **Inventário aberto**: o inventariante representa o espólio; junta o termo de compromisso.
   **Encerrado**: sucedem os herdeiros e legatários na forma da partilha (formal de partilha ou
   escritura). **Inexistente**: habilitação de **todos** os sucessores (arts. 687 a 692 do CPC
@@ -119,16 +123,22 @@ determina juntar o que já está nos autos (CGJ/AL, `cgj_normas.md`):
 ## 7. Requisitórios e honorários
 
 - **RPV ou precatório** conforme o valor por beneficiário (Lei Estadual n.º 7.154/2010 para o Estado
-  de Alagoas — módulo de Fazenda Pública, item 5 [conferir]); a RPV paga-se em dois meses da entrega da
-  requisição (art. 535, § 3º, II); o precatório é requisitado ao Presidente do Tribunal (art. 535, § 3º,
-  I; art. 100 da CF). Vedado fracionar o valor para enquadrá-lo como RPV (art. 100, § 8º, da CF);
+  de Alagoas — módulo de Fazenda Pública, item 5 [conferir]); o prazo de pagamento da RPV é o do art.
+  535, § 3º, II, do CPC (dois meses da entrega da requisição), a confrontar com os 90 dias do art. 2º da
+  Lei Estadual n.º 7.154/2010 [conferir, como no módulo de Fazenda Pública]; o precatório é requisitado
+  ao Presidente do Tribunal (art. 535, § 3º, I; art. 100 da CF). Vedado fracionar o valor para enquadrá-lo como RPV (art. 100, § 8º, da CF);
   renúncia ao excedente só com poderes específicos [conferir].
 - **Honorários contratuais**: destaque do principal com o contrato juntado antes da expedição (art. 22,
-  § 4º, da Lei n.º 8.906/1994) [conferir os limites do STF ao destaque e à requisição autônoma].
+  § 4º, da Lei n.º 8.906/1994) [conferir]; o destaque segue a natureza do crédito principal, e a
+  expedição de requisitório autônomo (RPV separada) para os honorários contratuais encontra limite na
+  jurisprudência do STF [conferir antes de deferir].
 - **Honorários sucumbenciais da fase de cumprimento**: não são devidos no cumprimento contra a Fazenda
-  que enseje precatório, se não impugnado (art. 85, § 7º, do CPC); devidos na execução individual de
-  sentença coletiva, ainda que não impugnada (Súmula 345/STJ e Tema 973/STJ [conferir]). Honorários são
-  verba alimentar e podem ser requisitados de forma autônoma (SV 47 [conferir]).
+  que enseje precatório, se não impugnado (art. 85, § 7º, do CPC), nem quando o crédito se paga por RPV
+  e não houve impugnação (Tema 1.190/STJ [conferir]); ressalva-se a execução individual de sentença
+  coletiva, em que são devidos ainda que não impugnada (Súmula 345/STJ e Tema 973/STJ [conferir]).
+  Os honorários são verba de natureza alimentar, satisfeita por precatório ou RPV em ordem especial
+  (SV 47 [conferir]); a execução autônoma dos honorários sucumbenciais, sem fracionar o crédito
+  principal, é admitida pelo STF (Tema 18 da repercussão geral, RE 564.132 [conferir]).
 - **No cumprimento de sentença não há custas** (`redacao.md`, item 5).
 - A decisão que homologa o cálculo fixa o valor de cada beneficiário (principal, honorários
   contratuais destacados, honorários sucumbenciais), as retenções e a data-base, e determina a
@@ -137,9 +147,9 @@ determina juntar o que já está nos autos (CGJ/AL, `cgj_normas.md`):
 ## 8. Depois da expedição
 
 - **Cessão de crédito** de precatório já expedido: a comunicação é feita pelo interessado diretamente
-  à Presidência do Tribunal (art. 50 da Resolução TJAL n.º 17/2020 [modelo; conferir]; art. 100, §§ 13
-  e 14, da CF; Resolução CNJ n.º 303/2019 [conferir]); não compete ao juízo da execução apreciá-la
-  [modelo].
+  à Presidência do Tribunal (art. 50 da Resolução TJAL n.º 17/2020 [modelo; conferir]) e ao ente
+  devedor (art. 100, §§ 13 e 14, da CF; Resolução CNJ n.º 303/2019 [conferir]); não compete ao juízo da
+  execução apreciá-la [modelo].
 - **Petição repetitiva** sobre questão já decidida: reitera-se o despacho anterior e ordena-se à
   Secretaria que não torne os autos conclusos por mera petição de igual teor, certificando apenas a
   juntada [modelo]. Os autos permanecem arquivados, se for o caso, e os requerentes são intimados por
@@ -161,6 +171,9 @@ determina juntar o que já está nos autos (CGJ/AL, `cgj_normas.md`):
 - Núcleo decisório: "Diante do exposto, determino a intimação da parte exequente para, no prazo de 15
   (quinze) dias, sob pena de extinção do processo sem resolução do mérito, trazer aos autos:" — e a
   enumeração recuada, `+ i)`, `+ ii)`… e `++ a)`, `++ b)`… (`formato_minuta.md`), só com o que falta.
+  O parágrafo do dispositivo leva só a ordem (sai inteiro em negrito e sublinhado); a justificativa
+  que um dos modelos põe depois dela ("A alegação genérica de desconhecimento do paradeiro não é
+  suficiente…") vai no parágrafo anterior, na fundamentação.
 - Encadeamento até o próximo ato útil, um comando por parágrafo, sublinhados: "Com a manifestação da
   parte exequente no prazo assinalado, intime-se a Alagoas Previdência para, no prazo de 30 (trinta)
   dias, querendo, impugnar o cumprimento de sentença, …"; "Após a impugnação, intime-se a parte
@@ -187,7 +200,8 @@ determina juntar o que já está nos autos (CGJ/AL, `cgj_normas.md`):
 - Aceitar "Espólio" sem inventariante; deferir habilitação parcial; ignorar o cônjuge ou o
   companheiro sobrevivente; não ouvir a Fazenda sobre a habilitação.
 - Aplicar a multa do art. 523 à Fazenda; condenar em custas no cumprimento; fixar honorários da fase
-  em precatório não impugnado.
+  em cumprimento não impugnado, por precatório ou por RPV (salvo a execução individual de sentença
+  coletiva).
 - Fracionar o crédito para enquadrá-lo como RPV; esquecer o destaque dos honorários contratuais
   requerido com o contrato; expedir sem as retenções e contas informadas.
 - Apreciar cessão de crédito de precatório já expedido, ou determinar sequestro de verba de precatório.

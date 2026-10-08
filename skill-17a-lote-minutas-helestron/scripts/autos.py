@@ -184,7 +184,7 @@ def com_apoio(est: dict, numeros: list) -> list:
 
 # ---------------------------------------------------------------- inventário
 
-def _achar(diretorio: Path, stem: str, seq: str, sufixo: str, palavra: str = ""):
+def _achar(diretorio: Path, stem: str, seq: str, sufixo: str, palavra: str = "", alvo: str = None):
     """Arquivo associado ao PDF em _texto/, _controle/ ou no próprio diretório (nome exato; depois,
     o que traga o número e a palavra). Para o texto, descarta capa, meta e relatório."""
     bases = [b for b in (diretorio / "_texto", diretorio / "_controle", diretorio) if b.is_dir()]
@@ -192,10 +192,10 @@ def _achar(diretorio: Path, stem: str, seq: str, sufixo: str, palavra: str = "")
     for base in bases:
         if (base / nome_exato).exists() and (palavra or base.name == "_texto" or base == diretorio):
             return base / nome_exato
-    alvo = comum.numero_cnj(stem)
+    alvo = alvo or comum.numero_cnj(stem)
     for base in bases:
         for f in sorted(base.glob(f"*{seq}*{sufixo}")):
-            if alvo and comum.numero_cnj(f.name) != alvo:
+            if alvo and comum.numero_cnj(f.name) not in (None, alvo):
                 continue  # o incidente (-01) não herda a capa nem o texto do principal, e vice-versa
             nome = f.name.lower()
             if palavra and palavra in nome:
@@ -326,9 +326,9 @@ def inventario(argv):
         a["pdfs"].sort()
         pdf0 = Path(a["pdfs"][0])
         seq = n.split("-")[0]
-        texto = _achar(pdf0.parent, pdf0.stem, seq, ".txt")
-        capa = _achar(pdf0.parent, pdf0.stem, seq, ".json", "capa")
-        meta = _achar(pdf0.parent, pdf0.stem, seq, ".json", "meta")
+        texto = _achar(pdf0.parent, pdf0.stem, seq, ".txt", alvo=n)
+        capa = _achar(pdf0.parent, pdf0.stem, seq, ".json", "capa", alvo=n)
+        meta = _achar(pdf0.parent, pdf0.stem, seq, ".json", "meta", alvo=n)
         info = _capa_info(capa)
         transcricoes = idx_transc.get(n, [])
         sigiloso = info["sigiloso"] or a["sigilo_dir"] or any(t["sigilosa"] for t in transcricoes)
@@ -632,7 +632,7 @@ def preparar(argv):
             if pasta_pdf not in via_helestron_feito:  # o próprio Helestron extrai, sem baixar nada
                 via_helestron_feito.add(pasta_pdf)
                 ph.preparar(pasta_pdf)
-            novo = _achar(Path(pasta_pdf), Path(d["pdfs"][0]).stem, n.split("-")[0], ".txt")
+            novo = _achar(Path(pasta_pdf), Path(d["pdfs"][0]).stem, n.split("-")[0], ".txt", alvo=n)
             if novo:
                 p["texto_helestron"] = str(novo)
                 arq = arquivo_texto(trab, p, {**d, "texto_helestron": str(novo)})
@@ -640,6 +640,9 @@ def preparar(argv):
             try:
                 extrair(d["pdfs"], arq)
             except Exception as e:  # registra e segue: falha de um processo não trava o lote
+                if not argv and n not in lote_nums:  # autos de apoio: avisa, sem tirar o processo dos lotes futuros
+                    print(f" ?. {n} (apoio) — extração do texto falhou ({e}); leia o PDF ou peça novo download")
+                    continue
                 p["etapa"] = "falhou"
                 p["alerta"] = f"extração do texto falhou: {e}"
                 print(f"{p.get('posicao', '?'):>2}. {n} — FALHOU na extração ({e})")

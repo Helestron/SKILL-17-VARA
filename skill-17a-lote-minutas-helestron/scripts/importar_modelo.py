@@ -144,7 +144,7 @@ def importar(arq: Path) -> str:
     ato = "sentença" if "S E N T" in titulo else "decisão" if "D E C I S" in titulo else "despacho"
     processo = next((comum.numero_cnj(p["texto"]) for p in pars if comum.numero_cnj(p["texto"])), None)
     out = [f"// modelo importado de: {arq.name}", f"@ato {ato}"] + ([f"@processo {processo}"] if processo else [])
-    comecou = terminou = False
+    comecou = terminou = corpo_iniciado = False
     for p in pars:
         t = p["texto"]
         if not comecou:
@@ -158,6 +158,9 @@ def importar(arq: Path) -> str:
             else:
                 out.append(out_cab)
                 continue
+        if not corpo_iniciado and re.match(r"^[A-ZÇÃÕÉÊÁÍÓÚÂÔ /]{3,}:\s", t):
+            out.append(f"// cabeçalho: {t}")  # "AUTOR: …", "RÉU: …" abaixo do título continuam cabeçalho
+            continue
         if not terminou and re.search(r"datado eletronicamente|^JUIZA? DE DIREITO$", t):
             terminou = True  # local, data e assinatura vêm do modelo do SAJ
         if terminou:
@@ -165,8 +168,9 @@ def importar(arq: Path) -> str:
             continue
         visiveis = [r for r in p["runs"] if r["t"].strip()]
         courier = bool(visiveis) and sum(r["courier"] for r in visiveis) > len(visiveis) / 2
-        cit = courier
-        item = not courier and p["recuo"] >= 1500  # enumeração recuada em Times (i), ii)… a), b)…)
+        enumerador = re.match(r"^(?:\d{1,3}\.\s*)?(?:[ivxl]+|[a-z])\)", t)
+        item = not courier and p["recuo"] >= 1500 and bool(enumerador)  # enumeração recuada em Times
+        cit = courier or (p["recuo"] >= 1500 and not item)  # transcrição recuada, ainda que em Times
         todo_b = bool(visiveis) and all(r["b"] for r in visiveis)
         todo_u = bool(visiveis) and all(r["u"] for r in visiveis)
         if cit:
@@ -184,8 +188,12 @@ def importar(arq: Path) -> str:
         else:
             out.append(_inline(p["runs"]))
         if not cit:  # numeração digitada à mão no modelo ("5.", "**6.**", "__9.__") não entra na marcação
-            out[-1] = re.sub(r"^((?:!! |__ |\+\+ |\+ )?)(?:\*\*|__)*\d{1,3}\.(?:\*\*|__)*\s+", r"\1", out[-1])
-        if re.fullmatch(r"P\. ?R\. ?I\.", t) or (re.match(r"^Cumpra-se\b", t) and len(t.split()) <= 8):
+            def _sem_numero(m):
+                abre, fecha = m.group(2), m.group(3)
+                return m.group(1) + ("" if fecha else abre)  # "**7. Não havendo**" → "**Não havendo**"
+            out[-1] = re.sub(r"^((?:!! |__ |\+\+ |\+ )?)((?:\*\*|__)*)\d{1,3}\.((?:\*\*|__)*)\s+", _sem_numero, out[-1])
+        corpo_iniciado = True
+        if re.fullmatch(r"P\. ?R\. ?I\.|Cumpra-se(,? observada a sequência acima)?\.", t):
             terminou = True
     return "\n".join(out) + "\n"
 
