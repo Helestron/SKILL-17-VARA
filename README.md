@@ -5,6 +5,21 @@ Capital (Fazenda Pública Estadual, Maceió/TJAL) a partir dos **autos em PDF j�
 aplicativo Helestron** e das **transcrições de audiências** do próprio aplicativo, e as entrega em
 **Word (.docx)**, no padrão estilístico dos modelos da vara.
 
+## Versão 2.1 (08/10/2026) — cumprimentos de sentença
+
+- Módulo `referencias/cumprimento_sentenca.md`: fase do processo e ato de cada uma; requisitos do
+  requerimento (art. 534 do CPC e Resolução TJAL n.º 21/2023); sucessão e habilitação (espólio,
+  inventário, cônjuge sobrevivente, ônus de indicar endereço); cálculos, fichas financeiras e
+  Contadoria; impugnação (art. 535); RPV, precatório e honorários; cessão de crédito; redação dos
+  despachos no padrão da vara.
+- Quatro modelos de despacho de cumprimento (`modelos/despacho_CS_*`, com os originais).
+- Enumeração recuada (`+ i)`, `++ a)`) no Word, como no despacho de adequação; fecho "Cumpra-se
+  observada a sequência acima.".
+- `autos.py relacionados N` (autos de conhecimento e demais sequenciais, extraídos junto com o lote) e
+  `autos.py requisitos N` (pistas, com as fls., de cada requisito e da fase).
+- Portão com apontamentos próprios do cumprimento (custas, Contadoria, fichas financeiras, remissão a
+  "item N").
+
 ## Versão 2.0 (08/10/2026) — o que mudou
 
 | Pedido | Como ficou |
